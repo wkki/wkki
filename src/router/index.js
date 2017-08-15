@@ -5,12 +5,11 @@ Vue.use(Router);
 
 import Item from '@/components/Item'
 import CategoryOverview from '@/components/CategoryOverview'
-
-
+import SearchResults from '@/components/SearchResults'
+import Login from '@/components/Login'
 
 
 export default new Router({
-  //mode: 'history',
   routes: [
     {
       path: '/',
@@ -28,10 +27,14 @@ export default new Router({
       component: CategoryOverview
     },
     {
-      path: '/search/:searchParams',
+      path: '/search',
       name: 'search',
-      component: null
+      component: SearchResults
+    },
+    {
+      path: '/token=:token',
+      name: 'login',
+      component: Login
     }
-
   ]
 })

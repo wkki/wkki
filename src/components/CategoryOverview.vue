@@ -16,7 +16,7 @@
   export default {
     data() {
       return {
-        cards: this.$store.getters.activeList
+        cards: this.$store.getters.activeList.cards
       }
     },
     methods: {

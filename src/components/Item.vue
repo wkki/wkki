@@ -12,9 +12,10 @@
     <section class="hero is-light">
       <div class="hero-body">
         <div class="container">
-          <h1 class="title is-2">
+          <h3 class="title is-2">
             {{activeCard.name}}
-          </h1>
+          </h3>
+          <h2></h2>
         </div>
         <pre>{{activeCard.desc}}</pre>
       </div>

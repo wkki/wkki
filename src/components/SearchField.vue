@@ -12,14 +12,14 @@
   export default {
     name: 'search',
     data(){
-        return {
-            searchString: ""
-        }
+      return {
+        searchString: ""
+      }
     },
     methods: {
-        submit(){
-          this.$router.push('/search/' + this.searchString)
-        }
+      submit(){
+        this.$router.push({path: '/search', query: {query: this.searchString}})
+      }
     }
   }
 

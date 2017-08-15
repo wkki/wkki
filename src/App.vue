@@ -6,16 +6,17 @@
       </div>
       <div class="column">
         <SearchField></SearchField>
+        <!--<a v-bind:href="authUrl" target="_blank">login</a>-->
       </div>
     </div>
     <div class="columns">
 
-      <div class="column is-one-third">
+      <div class="column is-one-quarter">
         <Navigation></Navigation>
       </div>
       <div class="column">
-      <router-view></router-view>
-        </div>
+        <router-view></router-view>
+      </div>
     </div>
   </div>
 </template>
@@ -39,6 +40,9 @@
     computed: {
       boardName() {
         return this.$store.getters.boardName
+      },
+      authUrl(){
+        return "https://trello.com/1/authorize?expiration=never&callback_method=fragment&name=trellowiki&key=" + this.$store.getters.apiKey + "&return_url=" + window.location.origin
       }
     },
 
