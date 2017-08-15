@@ -4,6 +4,7 @@ export default class Card {
   }
 
   reset(card) {
+    console.log(card)
     this.desc = card.desc;
     this.shortUrl = card.shortUrl;
     this.url = card.url;
@@ -11,5 +12,6 @@ export default class Card {
     this.idBoard = card.idBoard;
     this.idList = card.idList;
     this.name = card.name;
+    this.dateLastActivity = card.dateLastActivity;
   }
 }
