@@ -22,6 +22,7 @@ const store = new Vuex.Store({
     board: new Board({}),
     lists: {},
     activeCard: new Card({}),
+    mainCard: new Card({}),
     activeList: new List([]),
     searchResults: {}
   },
@@ -46,16 +47,42 @@ const store = new Vuex.Store({
     },
     apiKey(state){
       return state.apiKey
+    },
+    mainCard(state){
+      return state.mainCard
     }
 
   },
   actions: {
     init(context){
+      // todo: this is super ugly.
       context.dispatch('fetchBoard');
-      helpers.init(context.getters.boardId)
+      return helpers.init(context.getters.boardId)
         .then(lists => {
-          console.log(lists);
-          context.commit('setLists', lists)
+          context.commit('setLists', lists);
+
+          for (var listId in lists) {
+            // if we have index list, search for "main" card and set as mainCard in store
+            if (lists[listId].name === "index") {
+              console.log('found index')
+
+              return helpers.fetchList(listId)
+                .then(list => {
+                  let findMain = (card) => {
+                    return card.name === 'main'
+                  };
+
+                  let mainCard = list.find(findMain);
+                  if (mainCard) {
+                    return helpers.fetchCard(mainCard.id)
+                      .then(card => {
+                        context.commit('setMainCard', card)
+                        return true
+                      })
+                  }
+                });
+            }
+          }
         })
     },
     fetchBoard(context){
@@ -101,6 +128,9 @@ const store = new Vuex.Store({
     },
     setSearchResults(state, results){
       state.searchResults = Object.assign({}, state.searchResults, results)
+    },
+    setMainCard(state, card){
+      state.mainCard.reset(card)
     }
   },
   modules: {}

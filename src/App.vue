@@ -44,10 +44,6 @@
       authUrl(){
         return "https://trello.com/1/authorize?expiration=never&callback_method=fragment&name=trellowiki&key=" + this.$store.getters.apiKey + "&return_url=" + window.location.origin
       }
-    },
-
-    mounted() {
-      this.$store.dispatch('init');
     }
   }
 

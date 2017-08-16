@@ -10,13 +10,15 @@ import store from './store/index';
 Vue.config.productionTip = false;
 
 
-// todo: https://stackoverflow.com/questions/42579601/how-to-access-async-store-data-in-vue-router-for-usage-in-beforeenter-hook
+store.dispatch('init')
+  .then(() => {
+  console.log('loaded!')
+    /* eslint-disable no-new */
+    new Vue({
+      el: '#app',
+      store,
+      router,
+      render: h => h(App)
+    })
 
-
-/* eslint-disable no-new */
-new Vue({
-  el: '#app',
-  store,
-  router,
-  render: h => h(App)
-})
+  });

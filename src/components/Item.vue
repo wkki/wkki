@@ -1,5 +1,5 @@
 <template>
-  <div class="item" v-if="activeCard.name">
+  <div class="item" v-if="Object.keys(activeCard).length !== 0">
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
         <li>
@@ -32,20 +32,28 @@
     name: 'item',
     computed: {
       activeCard() {
-        return this.$store.getters.activeCard
+        if (this.$route.params.cardId) {
+          return this.$store.getters.activeCard
+        } else {
+          return this.$store.getters.mainCard
+        }
       },
       activeCardsList(){
-        let listId = this.$store.getters.activeCard.idList;
+        let listId = this.activeCard.idList;
         return this.$store.getters.lists[listId]
       }
     },
     watch: {
       '$route' (to, from) {
-        this.$store.dispatch('fetchCard', to.params.cardId)
+        if (to.params.cardId) {
+          this.$store.dispatch('fetchCard', to.params.cardId)
+        }
       }
     },
     mounted(){
-      this.$store.dispatch('fetchCard', this.$route.params.cardId)
+      if (this.$route.params.cardId) {
+        this.$store.dispatch('fetchCard', this.$route.params.cardId)
+      }
     },
   }
 </script>

@@ -58,12 +58,11 @@ let search = (terms) => {
 
 
 let init = (boardId) => {
-  // todo: could be all in fetchLists
   let lists = {};
   return fetchLists(boardId)
     .then((_lists) => {
-        _lists.forEach(cat => {
-          lists[[cat['id']]] = {name: cat['name']}
+        _lists.forEach(list => {
+          lists[[list['id']]] = {name: list['name']}
         });
         return lists
       }
