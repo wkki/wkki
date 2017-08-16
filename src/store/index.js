@@ -11,10 +11,14 @@ import List from './List'
 import Card from './Card'
 import Board from './Board'
 
+
+console.log(trello_board_id)
+
 const store = new Vuex.Store({
   state: {
-    boardId: "598bc730bc7759647ab96c09",
-    apiKey: '256fb33e0fa1570e3528e737f00996db',
+    boardId: trello_board_id,
+    apiKey: trello_api_key,
+
     board: new Board({}),
     lists: {},
     activeCard: new Card({}),

@@ -19,7 +19,9 @@ module.exports = merge(baseWebpackConfig, {
   devtool: '#cheap-module-eval-source-map',
   plugins: [
     new webpack.DefinePlugin({
-      'process.env': config.dev.env
+      'process.env': config.dev.env,
+      'trello_api_key': JSON.stringify(config.dev.env.TRIXI_TRELLO_API_KEY),
+      'trello_board_id': JSON.stringify(config.dev.env.TRIXI_TRELLO_BOARD_ID)
     }),
     // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
     new webpack.HotModuleReplacementPlugin(),
