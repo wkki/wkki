@@ -6,6 +6,8 @@ import VueResource from 'vue-resource'
 Vue.use(Vuex);
 Vue.use(VueResource);
 
+import router from '../router'
+
 import helpers from '../trelloApi/apiHelpers'
 import List from './List'
 import Card from './Card'
@@ -14,11 +16,11 @@ import Board from './Board'
 let localStorePrefix = window.location.host;
 let localStore = {
   get(key){
-    console.log('prefix', localStorePrefix)
+    console.log('prefix', localStorePrefix);
     return window.localStorage.getItem(localStorePrefix + key)
   },
   set(key, value){
-    console.log('prefix', localStorePrefix)
+    console.log('prefix', localStorePrefix);
     window.localStorage.setItem(localStorePrefix + key, value)
   },
   rm(key){
@@ -38,7 +40,8 @@ const store = new Vuex.Store({
     mainCard: new Card({}),
     activeList: new List([]),
     searchResults: {},
-    oauthToken: localStore.get('oauthToken')
+    oauthToken: localStore.get('oauthToken'),
+    boardIsPrivate: false
   },
   getters: {
     boardId(state){
@@ -73,14 +76,17 @@ const store = new Vuex.Store({
     },
     oauthToken(state){
       return state.oauthToken
+    },
+    boardIsPrivate(state){
+      return state.boardIsPrivate
     }
 
   },
   actions: {
     init(context){
       // todo: this is super ugly.
-      context.dispatch('fetchBoard');
-      return helpers.init(context.getters.boardId)
+      return context.dispatch('fetchBoard')
+        .then(() => helpers.init(context.getters.boardId, context.getters.oauthToken, context.getters.apiKey))
         .then(lists => {
           context.commit('setLists', lists);
 
@@ -89,7 +95,7 @@ const store = new Vuex.Store({
             if (lists[listId].name === "index") {
               console.log('found index')
 
-              return helpers.fetchList(listId)
+              return helpers.fetchList(listId, context.getters.oauthToken, context.getters.apiKey)
                 .then(list => {
                   let findMain = (card) => {
                     return card.name === 'main'
@@ -97,7 +103,7 @@ const store = new Vuex.Store({
 
                   let mainCard = list.find(findMain);
                   if (mainCard) {
-                    return helpers.fetchCard(mainCard.id)
+                    return helpers.fetchCard(mainCard.id, context.getters.oauthToken, context.getters.apiKey)
                       .then(card => {
                         context.commit('setMainCard', card)
                         return true
@@ -106,24 +112,30 @@ const store = new Vuex.Store({
                 });
             }
           }
+        }).catch((e) => {
+          console.log(e)
         })
     },
     fetchBoard(context){
-      helpers.fetchBoard(context.getters.boardId)
+      return helpers.fetchBoard(context.getters.boardId, context.getters.oauthToken, context.getters.apiKey)
         .then(board => {
-          context.commit('setBoard', board)
+          if(board) {
+            context.commit('setBoard', board)
+          } else{
+            context.commit('boardIsPrivate', true)
+          }
         })
     },
     fetchCard(context, cardId) {
       context.commit('setActiveCard', {});
-      helpers.fetchCard(cardId)
+      helpers.fetchCard(cardId, context.getters.oauthToken, context.getters.apiKey)
         .then((card) => {
           context.commit('setActiveCard', card)
         })
     },
     fetchList(context, listId){
       context.commit('setActiveList', []);
-      helpers.fetchList(listId)
+      helpers.fetchList(listId, context.getters.oauthToken, context.getters.apiKey)
         .then((list) => {
           context.commit('setActiveList', list)
         })
@@ -137,11 +149,13 @@ const store = new Vuex.Store({
     },
     logIn(context, oauthToken){
       localStore.set('oauthToken', oauthToken);
-      context.commit('logIn', oauthToken)
+      context.commit('logIn', oauthToken);
+      context.dispatch('init')
     },
     logOut(context){
       localStore.rm('oauthToken');
       context.commit('logIn', undefined)
+      context.dispatch('init')
     },
     addCategory(context, name){
       helpers.addCategory(name, context.getters.boardId, context.getters.oauthToken, context.getters.apiKey)
@@ -185,6 +199,9 @@ const store = new Vuex.Store({
     },
     logIn(state, oauthToken){
       state.oauthToken = oauthToken
+    },
+    boardIsPrivate(state, isPrivate){
+      state.boardIsPrivate = isPrivate
     }
   },
   modules: {}

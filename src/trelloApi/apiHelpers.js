@@ -5,9 +5,14 @@ import List from '../store/List'
 
 let BASE_URL = 'https://trello.com/1';
 
-let fetchLists = (boardId) => {
+let fetchLists = (boardId, oauthToken, apiKey) => {
   let url = [BASE_URL, 'boards', boardId, 'lists'].join('/');
-  return Vue.http.get(url)
+  return Vue.http.get(url, {
+    params: {
+      key: apiKey,
+      token: oauthToken
+    }
+  })
     .then(response => {
       console.log('got response');
       return response.body
@@ -17,10 +22,16 @@ let fetchLists = (boardId) => {
     });
 };
 
-let fetchList = (listId) => {
+let fetchList = (listId, oauthToken, apiKey) => {
   return Vue.http.get(
     [BASE_URL, 'lists', listId, 'cards'].join('/'),
-    {params: {fields: 'id,name'}}
+    {
+      params: {
+        fields: 'id,name',
+        key: apiKey,
+        token: oauthToken
+      }
+    }
   )
     .then(response => {
       if (response.status !== 200) {
@@ -31,8 +42,13 @@ let fetchList = (listId) => {
     })
 };
 
-let fetchCard = (id) => {
-  return Vue.http.get([BASE_URL, 'cards', id].join('/'))
+let fetchCard = (id, oauthToken, apiKey) => {
+  return Vue.http.get([BASE_URL, 'cards', id].join('/'), {
+    params: {
+      key: apiKey,
+      token: oauthToken
+    }
+  })
     .then(response => {
       return response.body
     }, response => {
@@ -41,13 +57,19 @@ let fetchCard = (id) => {
     });
 };
 
-let fetchBoard = (boardId) => {
-  return Vue.http.get([BASE_URL, 'boards', boardId].join('/'))
+let fetchBoard = (boardId, oauthToken, apiKey) => {
+  return Vue.http.get([BASE_URL, 'boards', boardId].join('/'), {
+    params: {
+      key: apiKey,
+      token: oauthToken
+    }
+  })
     .then(response => {
       return response.body
     }, response => {
       // error
       console.log(this.response)
+      return false
     });
 };
 
@@ -127,9 +149,9 @@ let search = (terms, boardId, oauthToken, apiKey) => {
 };
 
 
-let init = (boardId) => {
+let init = (boardId, oauthToken, apiKey) => {
   let lists = {};
-  return fetchLists(boardId)
+  return fetchLists(boardId, oauthToken, apiKey)
     .then((_lists) => {
         _lists.forEach(list => {
           lists[[list['id']]] = {name: list['name']}

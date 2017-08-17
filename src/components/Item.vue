@@ -79,7 +79,7 @@
       },
       activeCardsList(){
         let listId = this.activeCard.idList;
-        return this.$store.getters.lists[listId]
+        return this.$store.getters.lists[listId] || {}
       }
     },
     methods: {
