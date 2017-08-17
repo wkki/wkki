@@ -51,6 +51,36 @@ let fetchBoard = (boardId) => {
     });
 };
 
+let addCategory = (name, boardId, oauthToken, apiKey) => {
+  return Vue.http.post(
+    [BASE_URL, 'lists'].join('/'),
+    {},
+    {
+      params: {
+        name: name,
+        idBoard: boardId,
+        key: apiKey,
+        token: oauthToken
+      }
+    }
+  )
+};
+
+let addCard = (name, listId, oauthToken, apiKey) => {
+  return Vue.http.post(
+    [BASE_URL, 'cards'].join('/'),
+    {},
+    {
+      params: {
+        name: name,
+        idList: listId,
+        key: apiKey,
+        token: oauthToken
+      }
+    }
+  )
+}
+
 let search = (terms, boardId, oauthToken, apiKey) => {
   // https://api.trello.com/1/search?query=
   return Vue.http.get(
@@ -88,5 +118,7 @@ export default {
   fetchCard,
   fetchBoard,
   fetchList,
-  search
+  search,
+  addCategory,
+  addCard
 }

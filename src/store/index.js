@@ -14,9 +14,11 @@ import Board from './Board'
 let localStorePrefix = window.location.host;
 let localStore = {
   get(key){
+    console.log('prefix', localStorePrefix)
     return window.localStorage.getItem(localStorePrefix + key)
   },
   set(key, value){
+    console.log('prefix', localStorePrefix)
     window.localStorage.setItem(localStorePrefix + key, value)
   }
 };
@@ -134,6 +136,18 @@ const store = new Vuex.Store({
     logOut(context){
       localStore.set('oauthToken', undefined);
       context.commit('logIn', undefined)
+    },
+    addCategory(context, name){
+      helpers.addCategory(name, context.getters.boardId, context.getters.oauthToken, context.getters.apiKey)
+        .then(() => {
+          context.dispatch('init')
+        })
+    },
+    addCard(context, {cardName, listId}){
+      helpers.addCard(cardName, listId, context.getters.oauthToken, context.getters.apiKey)
+        .then(() => {
+          context.dispatch('fetchList', listId)
+        })
     }
   },
   mutations: {

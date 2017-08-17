@@ -6,6 +6,12 @@
       </p>
       <ul class="menu-list">
         <li v-for="card in cards"><a @click="getItem(card.id)">{{card.name}}</a></li>
+        <p v-if="showInput" class="control">
+          <input class="input " type="text" placeholder="new card" v-model="newCard"
+                 @keyup.enter="submitCard">
+        </p>
+
+        <li><a v-if="$store.getters.isLoggedIn" @click="triggerShowInput()">+</a></li>
       </ul>
     </aside>
   </div>
@@ -16,12 +22,21 @@
   export default {
     data() {
       return {
-        cards: this.$store.getters.activeList.cards
+        cards: this.$store.getters.activeList.cards,
+        newCard: "",
+        showInput: false
       }
     },
     methods: {
       getItem(cardId){
         this.$router.push({name: 'card', params: {cardId: cardId}});
+      },
+      triggerShowInput(){
+        this.showInput = true
+      },
+      submitCard(){
+        this.$store.dispatch('addCard', {cardName: this.newCard, listId: this.$route.params.listId});
+        this.showInput = false
       }
     },
     watch: {
