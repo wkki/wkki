@@ -66,6 +66,33 @@ let addCategory = (name, boardId, oauthToken, apiKey) => {
   )
 };
 
+let saveCard = (card, oauthToken, apiKey) => {
+  return Promise.all([
+    Vue.http.put(
+      [BASE_URL, 'cards', card.id].join('/'),
+      {},
+      {
+        params: {
+          desc: card.desc,
+          key: apiKey,
+          token: oauthToken
+        }
+      }
+    ),
+    Vue.http.post(
+      [BASE_URL, 'cards', card.id, 'actions', 'comments'].join('/'),
+      {},
+      {
+        params: {
+          text: card.desc,
+          key: apiKey,
+          token: oauthToken
+        }
+      }
+    ),
+  ])
+};
+
 let addCard = (name, listId, oauthToken, apiKey) => {
   return Vue.http.post(
     [BASE_URL, 'cards'].join('/'),
@@ -120,5 +147,6 @@ export default {
   fetchList,
   search,
   addCategory,
-  addCard
+  addCard,
+  saveCard
 }

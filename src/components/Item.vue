@@ -1,31 +1,44 @@
 <template>
-  <div class="item" v-if="Object.keys(activeCard).length !== 0">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link :to="{ name: 'list', params: {listId: activeCard.idList}}">{{ activeCardsList.name }}
-          </router-link>
-        </li>
-        <li class="is-active"><a href="#">{{ activeCard.name }}</a></li>
-      </ul>
-    </nav>
-    <section class="hero is-light">
-      <div class="hero-body">
-        <div class="content">
-          <div v-html="convert(activeCard.desc)"></div>
-        </div>
+  <div class="item">
+    <div class="item" v-if="Object.keys(activeCard).length !== 0">
+      <nav class="breadcrumb" aria-label="breadcrumbs">
+        <ul>
+          <li>
+            <router-link :to="{ name: 'list', params: {listId: activeCard.idList}}">{{ activeCardsList.name }}
+            </router-link>
+          </li>
+          <li class="is-active"><a href="#">{{ activeCard.name }}</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="columns">
+      <div class="column">
+        <section class="hero is-light">
+          <div class="hero-body">
+            <div class="content">
+              <div v-html="convert(activeCard.desc)"></div>
+            </div>
+          </div>
+        </section>
       </div>
-    </section>
-
-    <a v-bind:href="activeCard.url">to Card</a><br>
-
-    latest activity: {{ activeCard.dateLastActivity }}
+      <div v-if="edit" class="column">
+        <EditItem></EditItem>
+      </div>
+    </div>
+    <div class="level">
+      <a v-bind:href="activeCard.url">go to Card</a><br>
+      <button v-if="$store.getters.isLoggedIn" @click="toggleEdit()" class="button">edit Card</button>
+    </div>
+      latest activity: {{ activeCard.dateLastActivity }}
   </div>
 </template>
 
 <script>
   import Vue from 'vue'
   import showdown from 'showdown'
+
+  import EditItem from './EditItem.vue'
   const classMap = {
     h1: 'title is-1',
     h2: 'title is-2',
@@ -52,13 +65,17 @@
 
   export default {
     name: 'item',
+    components: {
+      EditItem
+    },
+    data(){
+      return {
+        edit: false
+      }
+    },
     computed: {
       activeCard() {
-        if (this.$route.params.cardId) {
-          return this.$store.getters.activeCard
-        } else {
-          return this.$store.getters.mainCard
-        }
+        return this.$store.getters.activeCard
       },
       activeCardsList(){
         let listId = this.activeCard.idList;
@@ -68,6 +85,9 @@
     methods: {
       convert(markdownText){
         return conv.makeHtml(markdownText);
+      },
+      toggleEdit(){
+        this.edit = !this.edit
       }
     },
     watch: {

@@ -45,6 +45,9 @@ const store = new Vuex.Store({
       return state.boardId
     },
     activeCard(state){
+      if (!state.activeCard.name) {
+        return state.mainCard
+      }
       return state.activeCard
     },
     boardName(state){
@@ -151,6 +154,14 @@ const store = new Vuex.Store({
         .then(() => {
           context.dispatch('fetchList', listId)
         })
+    },
+    setActiveCardsDesc(context, text){
+      let card = context.getters.activeCard;
+      card.desc = text;
+      context.commit('setActiveCard', card)
+    },
+    saveCard(context, card){
+      helpers.saveCard(card, context.getters.oauthToken, context.getters.apiKey)
     }
   },
   mutations: {
