@@ -52,7 +52,7 @@
         return this.$store.getters.boardName
       },
       authUrl(){
-        return "https://trello.com/1/authorize?expiration=never&callback_method=fragment&name=trellowiki&key=" + this.$store.getters.apiKey + "&return_url=" + window.location.origin
+        return "https://trello.com/1/authorize?expiration=never&callback_method=fragment&name=trellowiki&key=" + this.$store.getters.apiKey + "&return_url=" + window.location.origin + window.location.pathname
       },
       isLoggedIn(){
         return this.$store.getters.isLoggedIn
