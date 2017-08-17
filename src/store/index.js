@@ -20,6 +20,9 @@ let localStore = {
   set(key, value){
     console.log('prefix', localStorePrefix)
     window.localStorage.setItem(localStorePrefix + key, value)
+  },
+  rm(key){
+    window.localStorage.removeItem(localStorePrefix + key);
   }
 };
 
@@ -134,7 +137,7 @@ const store = new Vuex.Store({
       context.commit('logIn', oauthToken)
     },
     logOut(context){
-      localStore.set('oauthToken', undefined);
+      localStore.rm('oauthToken');
       context.commit('logIn', undefined)
     },
     addCategory(context, name){
