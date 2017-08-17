@@ -18,7 +18,10 @@ let fetchLists = (boardId) => {
 };
 
 let fetchList = (listId) => {
-  return Vue.http.get([BASE_URL, 'lists', listId, 'cards?fields=id,name'].join('/'))
+  return Vue.http.get(
+    [BASE_URL, 'lists', listId, 'cards'].join('/'),
+    {params: {fields: 'id,name'}}
+  )
     .then(response => {
       if (response.status !== 200) {
         return []
@@ -48,11 +51,21 @@ let fetchBoard = (boardId) => {
     });
 };
 
-let search = (terms) => {
+let search = (terms, boardId, oauthToken, apiKey) => {
   // https://api.trello.com/1/search?query=
-  return Vue.http.get([BASE_URL, 'search?query=' + terms].join('/'))
+  return Vue.http.get(
+    [BASE_URL, 'search'].join('/'),
+    {
+      params: {
+        query: terms,
+        idBoards: boardId,
+        key: apiKey,
+        token: oauthToken
+      }
+    }
+  )
     .then(res => {
-      return res
+      return res.body
     })
 };
 

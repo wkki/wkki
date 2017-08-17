@@ -1,14 +1,24 @@
 <template>
   <div id="app">
-    <div class="columns">
-      <div class="column">
-        <h1 class="title">{{ boardName }}</h1>
+    <nav class="level">
+      <div class="level-left">
+        <div class="level-item">
+          <h1 class="title"><a href="">{{ boardName }}</a></h1>
+        </div>
       </div>
-      <div class="column">
-        <SearchField></SearchField>
-        <!--<a v-bind:href="authUrl" target="_blank">login</a>-->
+      <div class="level-right">
+        <div v-if="isLoggedIn">
+          <div class="level-item">
+            <SearchField></SearchField>
+            <p class="control">
+              <button class="button" @click="logOut">logout</button>
+            </p>
+          </div>
+        </div>
+        <a v-else v-bind:href="authUrl" target="_blank">login</a>
       </div>
-    </div>
+    </nav>
+
     <div class="columns">
 
       <div class="column is-one-quarter">
@@ -43,7 +53,15 @@
       },
       authUrl(){
         return "https://trello.com/1/authorize?expiration=never&callback_method=fragment&name=trellowiki&key=" + this.$store.getters.apiKey + "&return_url=" + window.location.origin
+      },
+      isLoggedIn(){
+        return this.$store.getters.isLoggedIn
       }
+    },
+    methods:{
+        logOut(){
+            this.$store.dispatch('logOut')
+        }
     }
   }
 

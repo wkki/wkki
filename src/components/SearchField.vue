@@ -1,9 +1,9 @@
 <template>
-  <div class="field">
     <div class="control">
-      <input class="input" type="text" placeholder="Search" v-model="searchString" @keyup.enter="submit">
+<p class="control">
+              <input class="input " type="text" placeholder="Search" v-model="searchString" @keyup.enter="submit">
+            </p>
     </div>
-  </div>
 </template>
 
 <script>

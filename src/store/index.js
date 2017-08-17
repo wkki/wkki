@@ -11,8 +11,16 @@ import List from './List'
 import Card from './Card'
 import Board from './Board'
 
+let localStorePrefix = window.location.host;
+let localStore = {
+  get(key){
+    return window.localStorage.getItem(localStorePrefix + key)
+  },
+  set(key, value){
+    window.localStorage.setItem(localStorePrefix + key, value)
+  }
+};
 
-console.log(trello_board_id)
 
 const store = new Vuex.Store({
   state: {
@@ -24,7 +32,8 @@ const store = new Vuex.Store({
     activeCard: new Card({}),
     mainCard: new Card({}),
     activeList: new List([]),
-    searchResults: {}
+    searchResults: {},
+    oauthToken: localStore.get('oauthToken')
   },
   getters: {
     boardId(state){
@@ -50,6 +59,12 @@ const store = new Vuex.Store({
     },
     mainCard(state){
       return state.mainCard
+    },
+    isLoggedIn(state){
+      return !!state.oauthToken
+    },
+    oauthToken(state){
+      return state.oauthToken
     }
 
   },
@@ -107,10 +122,18 @@ const store = new Vuex.Store({
     },
     search(context, query) {
       context.commit('setSearchResults', {});
-      helpers.search(query)
+      helpers.search(query, context.getters.boardId, context.getters.oauthToken, context.getters.apiKey)
         .then(res => {
           context.commit('setSearchResults', res)
         })
+    },
+    logIn(context, oauthToken){
+      localStore.set('oauthToken', oauthToken);
+      context.commit('logIn', oauthToken)
+    },
+    logOut(context){
+      localStore.set('oauthToken', undefined);
+      context.commit('logIn', undefined)
     }
   },
   mutations: {
@@ -131,6 +154,9 @@ const store = new Vuex.Store({
     },
     setMainCard(state, card){
       state.mainCard.reset(card)
+    },
+    logIn(state, oauthToken){
+      state.oauthToken = oauthToken
     }
   },
   modules: {}
