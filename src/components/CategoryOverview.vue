@@ -2,14 +2,16 @@
   <div class="column">
     <aside class="menu">
       <p class="menu-label">
-        items
+        Cards
       </p>
       <ul class="menu-list">
         <li v-for="card in cards"><a @click="getItem(card.id)">{{card.name}}</a></li>
-        <p v-if="showInput" class="control">
-          <input class="input " type="text" placeholder="new card" v-model="newCard"
-                 @keyup.enter="submitCard">
-        </p>
+        <li>
+          <div v-if="showInput" class="control">
+            <input class="input " type="text" placeholder="new card" v-model="newCard"
+                   @keyup.enter="submitCard">
+          </div>
+        </li>
 
         <li><a v-if="$store.getters.isLoggedIn" @click="triggerShowInput()">+</a></li>
       </ul>
@@ -23,7 +25,7 @@
     data() {
       return {
         cards: this.$store.getters.activeList.cards,
-        newCard: "",
+        newCard: '',
         showInput: false
       }
     },
@@ -36,7 +38,8 @@
       },
       submitCard(){
         this.$store.dispatch('addCard', {cardName: this.newCard, listId: this.$route.params.listId});
-        this.showInput = false
+        this.showInput = false;
+        this.newCard = '';
       }
     },
     watch: {

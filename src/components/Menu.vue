@@ -4,13 +4,16 @@
       <div class="column">
         <aside class="menu">
           <p class="menu-label">
-            categories
+            Lists
           </p>
           <ul class="menu-list">
             <li v-for="(value, key) in lists"><a @click="fetchList(key)">{{ value['name'] }}</a></li>
-            <p v-if="showInput" class="control">
-              <input class="input " type="text" placeholder="new category" v-model="newCategory" @keyup.enter="submitCategory">
-            </p>
+            <li>
+              <div v-if="showInput" class="control">
+                <input class="input " type="text" placeholder="new category" v-model="newCategory"
+                       @keyup.enter="submitCategory">
+              </div>
+            </li>
 
             <li><a v-if="$store.getters.isLoggedIn" @click="triggerShowInput()">+</a></li>
           </ul>
@@ -28,7 +31,7 @@
     data(){
       return {
         showInput: false,
-        newCategory: ""
+        newCategory: ''
       }
     },
     computed: {
@@ -45,7 +48,8 @@
       },
       submitCategory(){
         this.$store.dispatch('addCategory', this.newCategory);
-        this.showInput = false
+        this.showInput = false;
+        this.newCategory = '';
       }
     },
   }

@@ -28,11 +28,10 @@ let localStore = {
   }
 };
 
-
 const store = new Vuex.Store({
   state: {
-    boardId: trello_board_id,
-    apiKey: trello_api_key,
+    boardId: process.env.TRIXI_TRELLO_BOARD_ID,
+    apiKey: process.env.TRIXI_TRELLO_API_KEY,
 
     board: new Board({}),
     lists: {},

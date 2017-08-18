@@ -7,6 +7,7 @@ Vue.use(Router);
 import Item from '@/components/Item'
 import CategoryOverview from '@/components/CategoryOverview'
 import SearchResults from '@/components/SearchResults'
+import Settings from '@/components/Settings'
 
 
 export default new Router({
@@ -30,6 +31,11 @@ export default new Router({
       path: '/search',
       name: 'search',
       component: SearchResults
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: Settings
     },
     {
       path: '/token=:token',

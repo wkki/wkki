@@ -5,9 +5,13 @@ export default class List {
 
   reset(list) {
     console.log(list)
-    this.cards.length = 0;
+
+    for (let i = this.cards.length; i > 0; i--) {
+      this.cards.pop();
+    }
+
     list.forEach(card => {
-        this.cards.push(card)
-      })
+      this.cards.push(card)
+    })
   }
 }
