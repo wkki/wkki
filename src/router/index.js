@@ -4,10 +4,10 @@ import store from '../store/index'
 
 Vue.use(Router);
 
-import Item from '@/components/Item'
-import CategoryOverview from '@/components/CategoryOverview'
-import SearchResults from '@/components/SearchResults'
-import Settings from '@/components/Settings'
+import Item from '../components/Card.vue'
+import CategoryOverview from '../components/Cards.vue'
+import SearchResults from '../components/SearchResults.vue'
+import Settings from '../components/Settings.vue'
 
 
 export default new Router({

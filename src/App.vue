@@ -27,7 +27,7 @@
       <div class="columns">
 
         <div class="column is-one-quarter">
-          <Navigation></Navigation>
+          <Lists></Lists>
         </div>
         <div class="column">
           <router-view></router-view>
@@ -40,8 +40,8 @@
 <script>
   import Vue from 'vue'
 
-  import Navigation from './components/Menu.vue'
-  import Item from './components/Item.vue'
+  import Lists from './components/Lists.vue'
+  import Card from './components/Card.vue'
   import SearchField from './components/SearchField.vue'
   import PrivateBoardLogin from './components/PrivateBoardLogin.vue'
   import LoginButton from './components/LoginButton.vue'
@@ -50,8 +50,8 @@
     name: 'app',
 
     components: {
-      Navigation,
-      Item,
+      Lists,
+      Card,
       SearchField,
       PrivateBoardLogin,
       LoginButton
