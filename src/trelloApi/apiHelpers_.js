@@ -1,9 +1,8 @@
-import Vue from 'vue'
 
-import Card from '../store/Card'
-import List from '../store/List'
+import Card from '../store/boards/Card'
+import List from '../store/boards/List'
 
-let BASE_URL = 'https://trello.com/1';
+
 
 let fetchLists = (boardId, oauthToken, apiKey) => {
   let url = [BASE_URL, 'boards', boardId, 'lists'].join('/');
@@ -148,6 +147,22 @@ let search = (terms, boardId, oauthToken, apiKey) => {
     })
 };
 
+let fetchBoards = (member, oauthToken, apiKey) => {
+  return Vue.http.get(
+    [BASE_URL, 'members', member, 'boards'].join('/'),
+    {
+      params: {
+        key: apiKey,
+        token: oauthToken,
+        filter: 'open'
+      }
+    })
+    .then(res => {
+      console.log('boards', res.body)
+      return res.body
+    })
+};
+
 
 let init = (boardId, oauthToken, apiKey) => {
   let lists = {};
@@ -170,5 +185,6 @@ export default {
   search,
   addCategory,
   addCard,
-  saveCard
+  saveCard,
+  fetchBoards
 }

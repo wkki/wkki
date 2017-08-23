@@ -17,7 +17,6 @@
       </ul>
     </aside>
   </div>
-
 </template>
 
 <script>

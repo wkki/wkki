@@ -10,15 +10,10 @@ import store from './store/index';
 Vue.config.productionTip = false;
 
 
-store.dispatch('init')
-  .then(() => {
-  console.log('loaded!')
-    /* eslint-disable no-new */
-    new Vue({
-      el: '#app',
-      store,
-      router,
-      render: h => h(App)
-    })
-
-  });
+/* eslint-disable no-new */
+new Vue({
+  el: '#app',
+  store,
+  router,
+  render: h => h(App)
+})

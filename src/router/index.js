@@ -4,28 +4,22 @@ import store from '../store/index'
 
 Vue.use(Router);
 
-import Item from '../components/Card.vue'
-import CategoryOverview from '../components/Cards.vue'
-import SearchResults from '../components/SearchResults.vue'
+import SearchResults from '../components/BoardComponents/SearchResults.vue'
 import Settings from '../components/Settings.vue'
-
+import Board from '../components/Board.vue'
 
 export default new Router({
   routes: [
     {
-      path: '/',
-      name: 'item',
-      component: Item
-    },
-    {
-      path: '/card/:cardId',
-      name: 'card',
-      component: Item
-    },
-    {
-      path: '/list/:listId',
-      name: 'list',
-      component: CategoryOverview
+      path: '/board/:boardId',
+      name: 'board',
+      component: Board,
+      children: [
+        {
+          path: 'card/:cardId',
+          name: 'card'
+        }
+      ]
     },
     {
       path: '/search',
