@@ -1,4 +1,4 @@
-# trellowiki
+# wkki
 
 > A Vue.js project
 
@@ -6,17 +6,9 @@
 
 - create a public trello board
 
-- copy trixi.conf.js.dist to trixi.conf.js and fill in your board id and api key (if you know your board id and api key, you may jump to build setup :) )
+- copy wkki.conf.js.dist to wkki.conf.js and fill in your api key 
 
-### getting board id and api key
-
-#### board id
-
-in your browser, go to the board you want to use for the wiki.
-if you append ".json" to the board url, you can see the board data. "id" is your board id.
-(eg. https://trello.com/b/dpgtVTOV/demo -> https://trello.com/b/dpgtVTOV/demo.json)
-
-#### api key
+### getting an api key
 
 get from https://trello.com/app-key
 
@@ -44,10 +36,3 @@ npm run build --report
 ```
 
 this creates a dist folder. serve these files somewhere!
-
-## todo
-
-- links inside cards (to other cards)
-- searching
-- (markdown?) formatting
-- login & editing

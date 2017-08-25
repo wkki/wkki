@@ -1,8 +1,7 @@
 <template>
   <div>
     <ul>
-      <li>trixi {{ version }}</li>
-      <li>board id {{ $store.getters.boardId }}</li>
+      <li>wkki {{ version }}</li>
     </ul>
   </div>
 </template>

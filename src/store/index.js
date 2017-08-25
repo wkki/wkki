@@ -28,7 +28,7 @@ let localStore = {
 
 const store = new Vuex.Store({
   state: {
-    apiKey: process.env.TRIXI_TRELLO_API_KEY,
+    apiKey: process.env.WKKI_TRELLO_API_KEY,
     oauthToken: localStore.get('oauthToken'),
     showList: false,
     currentBoard: false,
