@@ -10,7 +10,6 @@ import Wiki from '../components/Wiki.vue'
 
 
 export default new Router({
-  mode: 'history',
   routes: [
     {
       path: '/',
@@ -20,6 +19,8 @@ export default new Router({
         console.log('before enter')
         let regexToken = /[&#]?token=([0-9a-f]{64})/;
         let regexedLocation = regexToken.exec(location.hash);
+        console.log(location.hash)
+        console.log(regexedLocation)
         if(regexedLocation && regexedLocation.length > 1) {
           let [_, token] = regexedLocation;
           console.log('token', token);
@@ -45,6 +46,15 @@ export default new Router({
       path: '/settings',
       name: 'settings',
       component: Settings
+    },
+    {
+      path: '/token=:token',
+      name: 'login',
+      component: Wiki,
+      beforeEnter(to, from, next){
+        store.dispatch('logIn', to.params.token)
+        next()
+      }
     }
   ]
 })
