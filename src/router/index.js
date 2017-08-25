@@ -4,22 +4,37 @@ import store from '../store/index'
 
 Vue.use(Router);
 
-import SearchResults from '../components/BoardComponents/SearchResults.vue'
+import SearchResults from '../components/WikiComponents/SearchResults.vue'
 import Settings from '../components/Settings.vue'
-import Board from '../components/Board.vue'
+import Wiki from '../components/Wiki.vue'
+
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
-      path: '/board/:boardId',
-      name: 'board',
-      component: Board,
-      children: [
-        {
-          path: 'card/:cardId',
-          name: 'card'
+      path: '/',
+      name: 'wiki',
+      component: Wiki,
+      beforeEnter(to, from, next){
+        console.log('before enter')
+        let regexToken = /[&#]?token=([0-9a-f]{64})/;
+        let regexedLocation = regexToken.exec(location.hash);
+        if(regexedLocation && regexedLocation.length > 1) {
+          let [_, token] = regexedLocation;
+          console.log('token', token);
+          if (token) {
+            console.log('sign in...');
+            store.dispatch('logIn', token)
+          }
         }
-      ]
+        next()
+      }
+    },
+    {
+      path: '/card/:cardId',
+      name: 'card',
+      component: Wiki
     },
     {
       path: '/search',
@@ -30,20 +45,6 @@ export default new Router({
       path: '/settings',
       name: 'settings',
       component: Settings
-    },
-    {
-      path: '/token=:token',
-      name: 'login',
-      beforeEnter(to, from, next){
-        if (to.params.token) {
-          console.log('sign in...');
-          store.dispatch('logIn', to.params.token)
-        }
-        next({
-          path: '/',
-          query: {redirect: to.fullPath}
-        })
-      }
     }
   ]
 })

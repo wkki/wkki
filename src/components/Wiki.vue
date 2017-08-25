@@ -1,7 +1,7 @@
 <template>
   <div class="columns">
     <div class="column is-one-quarter">
-      <Lists></Lists>
+      <Board></Board>
     </div>
     <List></List>
     <div class="column">
@@ -13,14 +13,14 @@
 
 <script>
   import Vue from 'vue'
-  import Lists from './BoardComponents/Lists.vue'
-  import List from './BoardComponents/List.vue'
-  import Card from './BoardComponents/Card.vue'
+  import Board from './WikiComponents/Board.vue'
+  import List from './WikiComponents/List.vue'
+  import Card from './WikiComponents/Card.vue'
 
   export default {
     name: 'board',
     components: {
-      Lists,
+      Board,
       Card,
       List
     }

@@ -6,9 +6,9 @@ import App from './App'
 import router from './router'
 import store from './store/index';
 
+require("font-awesome-webpack");
 
 Vue.config.productionTip = false;
-
 
 /* eslint-disable no-new */
 new Vue({

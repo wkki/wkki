@@ -19,17 +19,18 @@
     },
     computed:{
         input(){
-            return this.$store.getters.activeCard.desc
+            return this.$store.getters['cards/current']['card']['desc']
         }
     },
     methods: {
       update(e){
-        console.log(e.target.value);
         this.changes = true;
-        this.$store.dispatch('setActiveCardsDesc', e.target.value)
+        let card =  this.$store.getters['cards/current'];
+        card.card.desc = e.target.value;
+        this.$store.dispatch('cards/alter', card)
       },
       save(){
-        this.$store.dispatch('saveCard', this.$store.getters.activeCard);
+        this.$store.dispatch('cards/commit', this.$store.getters['cards/current']);
         this.changes = false;
       }
     }

@@ -30,23 +30,25 @@ const store = new Vuex.Store({
   state: {
     apiKey: process.env.TRIXI_TRELLO_API_KEY,
     oauthToken: localStore.get('oauthToken'),
-    activeList: false
+    showList: false,
+    currentBoard: false,
+    currentCard: false
   },
   getters: {
     apiKey(state){
       return state.apiKey
     },
-    oauthtoken(state){
+    oauthToken(state){
       return state.oauthToken
     },
-    activeList(state){
-      return state.activeList
+    showList(state){
+      return state.showList
+    },
+    isLoggedIn(state){
+      return !!state.oauthToken
     }
   },
   actions: {
-    setActiveList(context, listId){
-      context.commit('activeList', listId);
-    },
     logIn(context, oauthToken){
       localStore.set('oauthToken', oauthToken);
       context.commit('logIn', oauthToken);
@@ -54,14 +56,17 @@ const store = new Vuex.Store({
     logOut(context){
       localStore.rm('oauthToken');
       context.commit('logIn', undefined);
+    },
+    setShowList(context, flipTo){
+      context.commit('showList', flipTo)
     }
   },
   mutations: {
     logIn(state, oauthToken){
       state.oauthToken = oauthToken
     },
-    activeList(state, listId){
-      state.activeList = listId
+    showList(state, flipTo){
+      state.showList = flipTo
     }
   },
   modules: {

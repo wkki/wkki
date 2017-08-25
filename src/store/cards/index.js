@@ -2,21 +2,30 @@ import Vue from 'vue'
 
 const BASE_URL = 'https://trello.com/1';
 
-class Card{
-  constructor(cardId, card){
-    this.id = cardId;
+class Card {
+  constructor(id, card) {
+    this.id = id;
     this.card = card;
+    this.edit = false;
   }
 }
 
 export default {
   namespaced: true,
   state: {
-    cards: {}
+    cards: {},
+    current: false
   },
   getters: {
     cards(state){
       return state.cards
+    },
+    current(state){
+      if (state.current && state.cards[state.current]) {
+        return state.cards[state.current]
+      } else {
+        return false
+      }
     }
   },
   actions: {
@@ -40,12 +49,64 @@ export default {
           m.error = true;
           return m;
         })
-        .then((card) => context.commit('addCard', card));
+        .then((card) => {
+          context.commit('addCard', card);
+          return card
+        })
+        // init rest in case of getting to card from url
+        .then((card) => {
+
+          console.log(card.card);
+          let boardId = card.card.idBoard;
+          let listId = card.card.idList;
+
+          context.dispatch('boards/setCurrent', boardId, {root: true});
+          context.dispatch('lists/setCurrent', listId, {root: true});
+        })
+    },
+    get(context, id){
+      if (id && !context.getters.cards[id]) {
+        context.dispatch('fetch', id)
+      } else {
+        console.log('using card', id, 'from store')
+      }
+    },
+    setCurrent(context, id){
+      context.dispatch('get', id);
+      context.commit('current', id);
+    },
+    alter(context, card){
+      context.commit('addCard', card);
+    },
+    commit(context, card){
+      let urlCard = [BASE_URL, 'cards', card.card.id].join('/');
+      let urlComment = [BASE_URL, 'cards', card.card.id, 'actions', 'comments'].join('/');
+
+      let paramsCard = Object.assign(
+        {
+          key: context.rootGetters.apiKey,
+          token: context.rootGetters.oauthToken
+        },
+        {desc: card.card.desc});
+      let paramsComment = Object.assign(
+        {
+          key: context.rootGetters.apiKey,
+          token: context.rootGetters.oauthToken
+        },
+        {text: card.card.desc});
+
+      return Promise.all([
+        Vue.http.put(urlCard, paramsCard),
+        Vue.http.post(urlComment, paramsComment)
+      ])
     },
   },
   mutations: {
     addCard(state, card){
       state.cards = Object.assign({}, state.cards, {[card.id]: card})
+    },
+    current(state, id){
+      state.current = id
     }
   }
 

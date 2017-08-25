@@ -1,6 +1,6 @@
 <template>
   <div>
-  <div class="column" v-if="activeList">
+  <div class="column" v-if="showList">
     <aside class="menu">
       <p class="menu-label">
         Cards
@@ -11,11 +11,11 @@
         <li>
           <div v-if="showInput" class="control">
             <input class="input " type="text" placeholder="new card" v-model="newCard"
-                   @keyup.enter="submitCard">
+                   @keyup.enter="addCard">
           </div>
         </li>
 
-        <li><a v-if="$store.getters.isLoggedIn" @click="triggerShowInput()">+</a></li>
+        <li><a v-if="isEditable" @click="toggleShowInput()">+</a></li>
       </ul>
 
     </aside>
@@ -31,32 +31,39 @@
     data(){
       return {
         showInput: false,
-        newCategory: ''
+        newCard: ''
       }
     },
     computed: {
-      activeList(){
-        return this.$store.getters.activeList
-      },
       list(){
-        if (this.$store.getters['lists/lists'][this.activeList]) {
-          return this.$store.getters['lists/lists'][this.activeList]['cards']
+        if (this.$store.getters['lists/current']) {
+          return this.$store.getters['lists/current']['cards']
         } else {
           return [{name: 'loading...'}]
         }
+      },
+      isEditable(){
+          return this.$store.getters['boards/current']['isEditable']
+      },
+      showList(){
+          return this.$store.getters.showList
       }
     },
     methods: {
-      triggerShowInput(){
-        this.showInput = true
+      toggleShowInput(){
+        this.showInput = !this.showInput;
       },
-      submitCategory(){
-        this.$store.dispatch('addCategory', this.newCategory);
+      addCard(){
+        this.$store.dispatch('lists/addCard', {
+          name: this.newCard,
+          listId: this.$store.getters['lists/current']['list']['id']
+        });
         this.showInput = false;
-        this.newCategory = '';
+        this.newCard = '';
       },
       goToCard(cardId){
-        this.$store.dispatch('setActiveList', false);
+        this.$store.dispatch('setShowList', false);
+        this.$store.dispatch('cards/setCurrent', cardId);
         this.$router.push({name: 'card', params: {boardId: this.$route.params.boardId, cardId}})
       }
     },
