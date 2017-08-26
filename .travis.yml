@@ -16,7 +16,7 @@ deploy:
 
   github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
   repo: wkki/wkki.github.io
-  target_branch: travis-test
+  target_branch: $TRAVIS_BRANCH
 
   on:
-    branch: feature/addTravisCi
+    all_branches: true
