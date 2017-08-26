@@ -6,7 +6,7 @@ install:
   - npm i
 
 before_script:
-  - npm build prod
+  - npm run build
 
 deploy:
   provider: pages
