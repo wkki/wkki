@@ -1,22 +1,32 @@
 <template>
-  <div v-if="$store.getters.isLoggedIn">
+  <div class="container">
+    <h3 class="title is-3">Boards</h3>
+    <div v-if="boardsByOrga">
+      <div v-for="key in Object.keys(boardsByOrga).sort().reverse()">
 
-    <div :class="dropdownClass" @click="toggle()">
-      <div class="dropdown-trigger">
-        <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-          <span>your boards</span>
-          <span class="icon is-small">
-            <i class="fa fa-angle-down" aria-hidden="true"></i>
-          </span>
-        </button>
-      </div>
-      <div class="dropdown-menu" id="dropdown-menu" role="menu">
-        <div class="dropdown-content">
-          <a v-for="board in myBoards" @click="showBoard(board.id)" class="dropdown-item">
-            {{ board.name }}
-          </a>
+        <div class="columns">
+          <div class="column">
+            <h4 class="title is-4">{{key}}</h4>
+          </div>
         </div>
+
+        <div class="columns is-multiline is-10">
+          <div class="column is-4" v-for="board in boardsByOrga[key]">
+            <div v-if="board['name'] === 'wiki'" class="button is-primary is-fullwidth">
+              <p>{{ board['name'] }}</p>
+            </div>
+            <div v-else="" class="button is-outlined is-primary is-fullwidth">
+              <p>{{ board['name'] }}</p>
+            </div>
+          </div>
+
+        </div>
+
       </div>
+    </div>
+
+    <div v-else>
+      <h4 class="title is-4">loading...</h4>
     </div>
   </div>
 
@@ -30,18 +40,34 @@
       return {
         selected: 0,
         dropdownClass: 'dropdown',
+        tileWidth: 3
       }
     },
 
     computed: {
-      myBoards(){
+
+      boardsByOrga(){
         if (this.$store.getters['members/members']['me']) {
-          this.selected = this.$store.getters['members/members']['me']['boards'][0]['id'];
-          return this.$store.getters['members/members']['me']['boards']
+          console.log('have the boards')
+          let boardsByOrga = {};
+          let boards = this.$store.getters['members/members']['me']['boards'];
+          boards.forEach(board => {
+            let orga = board['idOrganization'] || 'me';
+            if (!boardsByOrga[orga]) {
+              boardsByOrga[orga] = [];
+            }
+            boardsByOrga[orga].push(board)
+          });
+          return boardsByOrga
         } else {
+          console.log('dispatching...')
           this.$store.dispatch('members/get', 'me');
+          return false
         }
-      }
+      },
+      organizations(){
+        return Object.keys(this.boardsByOrga)
+      },
     },
     methods: {
       showBoard(id){

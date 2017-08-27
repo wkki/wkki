@@ -42,7 +42,7 @@
       },
       myBoards(){
         if (this.$store.getters['members/members']['me']) {
-          this.selectedMe = this.$store.getters['members/members']['me']['boards'][0]['id']
+          this.selectedMe = this.$store.getters['members/members']['me']['boards'][0]['id'];
           return this.$store.getters['members/members']['me']['boards']
         } else {
           this.$store.dispatch('members/get', 'me');
