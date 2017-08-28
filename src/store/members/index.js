@@ -3,12 +3,46 @@ import Vue from 'vue'
 const BASE_URL = 'https://trello.com/1';
 
 class Member {
-  constructor(username, user, boards) {
+  constructor(username, member, boards) {
     this.username = username;
-    this.user = user;
+    this.member = member;
     this.boards = boards;
   }
 }
+
+let fetch = (id, apiKey, oauthToken) => {
+  let memberUrl = [BASE_URL, 'members', id].join('/');
+  let boardsUrl = [BASE_URL, 'members', id, 'boards?filter=open'].join('/');
+  let params = Object.assign(
+    {
+      key: apiKey,
+      token: oauthToken
+    },
+    {});
+  return Promise.all([
+    Vue.http.get(memberUrl, {params}),
+    Vue.http.get(boardsUrl, {params})
+  ])
+    .then(([memberResponse, boardResponse]) => {
+      console.log('fetch member', memberResponse.status, boardResponse.status);
+      return new Member(id, memberResponse.body, boardResponse.body);
+    }, ([memberResponse, boardResponse]) => {
+      let m = new Member(id, memberResponse.body, boardResponse.body);
+      m.error = true;
+      return m;
+    })
+};
+
+let get = (context, id) => {
+  console.log('get member', id);
+  if (id && !context.getters.members[id]) {
+    return fetch(id, context.rootGetters.apiKey, context.rootGetters.oauthToken)
+  } else {
+    return new Promise((resolve) => {
+      resolve(context.getters.lists[id])
+    })
+  }
+};
 
 export default {
   namespaced: true,
@@ -24,53 +58,31 @@ export default {
       if (state.current && state.members[state.current]) {
         return state.members[state.current]
       } else {
+        console.log('no current member');
         return false
       }
     },
     myBoards(state){
-      if(state.members['me']) {
+      if (state.members['me']) {
         return state.members['me']['boards']
       }
       return []
     }
   },
   actions: {
-    fetch(context, username){
-      console.log('fetching member', username)
-
-      let memberUrl = [BASE_URL, 'members', username].join('/');
-      let boardsUrl = [BASE_URL, 'members', username, 'boards'].join('/');
-
-      let params = Object.assign(
-        {
-          key: context.rootGetters.apiKey,
-          token: context.rootGetters.oauthToken
-        },
-        {});
-
-      return Promise.all([
-        Vue.http.get(memberUrl, {params}),
-        Vue.http.get(boardsUrl, {params})
-      ])
-        .then(([memberResponse, boardsResponse]) => {
-          console.log('fetchMember', memberResponse.status, boardsResponse.status);
-          return new Member(username, memberResponse.body, boardsResponse.body);
-        }, ([memberResponse, boardsResponse]) => {
-          let m = Member(username, memberResponse.body, boardsResponse.body);
-          m.error = true;
-          return m;
-        })
-        .then((member) => context.commit('addMember', member));
-    },
     get(context, id){
-      if (!context.getters.members[id]) {
-        context.dispatch('fetch', id)
-      } else {
-        console.log('using member', id, 'from store')
-      }
+      get(context, id)
+        .then((member) => {
+          context.commit('addMember', member);
+          if(member.member.idOrganizations){
+            member.member.idOrganizations.forEach((id) => {
+              context.dispatch('organizations/get', id, {root: true});
+            })
+          }
+        })
     },
     setCurrent(context, id){
-      context.dispatch('get', id)
+      context.dispatch('get', id);
       context.commit('current', id);
     }
   },

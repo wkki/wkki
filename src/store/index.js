@@ -10,6 +10,7 @@ import members from './members'
 import boards from './boards'
 import lists from './lists'
 import cards from './cards'
+import organizations from './organizations'
 
 let localStorePrefix = window.location.host;
 let localStore = {
@@ -73,7 +74,8 @@ const store = new Vuex.Store({
     members,
     boards,
     lists,
-    cards
+    cards,
+    organizations
   }
 });
 

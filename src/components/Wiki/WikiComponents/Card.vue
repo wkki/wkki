@@ -1,28 +1,31 @@
 <template>
   <div class="item" v-if="!$store.getters.showList">
-
-    <BreadCrumbs v-bind:card="card"></BreadCrumbs>
-    <div class="columns">
-      <div class="column">
-        <section class="hero is-light">
-          <div class="hero-body">
-            <div class="content">
-              <div v-html="convert(card.desc)"></div>
+    <template v-if="card">
+      <BreadCrumbs v-bind:card="card"></BreadCrumbs>
+      <div class="columns">
+        <div class="column">
+          <section class="hero is-light">
+            <div class="hero-body">
+              <div class="content">
+                <div v-html="convert(card.desc)"></div>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
+        <div v-if="edit" class="column">
+          <EditItem></EditItem>
+        </div>
       </div>
-      <div v-if="edit" class="column">
-        <EditItem></EditItem>
+
+      <div class="level">
+        <a v-bind:href="card.url">go to Card</a><br>
+        <button v-if="isEditable" @click="toggleEdit()" class="button">edit Card</button>
       </div>
-    </div>
 
-    <div class="level">
-      <a v-bind:href="card.url">go to Card</a><br>
-      <button v-if="isEditable" @click="toggleEdit()" class="button">edit Card</button>
-    </div>
-
-    latest activity: {{ card.dateLastActivity }}
+      latest activity: {{ card.dateLastActivity }}
+    </template>
+    <template v-else="">
+    </template>
   </div>
 </template>
 
@@ -46,7 +49,8 @@
         if (this.$store.getters['cards/current']) {
           return this.$store.getters['cards/current']['card']
         } else {
-          return [{name: 'loading...'}]
+            console.log('no card yet...')
+          return false
         }
       },
       isEditable(){
@@ -65,7 +69,7 @@
         return conv.makeHtml(markdownText) || '[no text]';
       },
       toggleEdit(){
-        if (this.$store.getters['cards/current']['card']) {
+        if (this.$store.getters['cards/current'] && this.$store.getters['cards/current']['card']) {
           let card = this.$store.getters['cards/current'];
           card.edit = !(card.edit);
           this.$store.dispatch('cards/alter', card);

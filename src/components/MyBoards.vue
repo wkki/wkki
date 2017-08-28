@@ -6,18 +6,18 @@
 
         <div class="columns">
           <div class="column">
-            <h4 class="title is-4">{{key}}</h4>
+            <h4 class="title is-4">{{ organizations(key) }}</h4>
           </div>
         </div>
 
         <div class="columns is-multiline is-10">
           <div class="column is-4" v-for="board in boardsByOrga[key]">
-            <div v-if="board['name'] === 'wiki'" class="button is-primary is-fullwidth">
-              <p>{{ board['name'] }}</p>
-            </div>
-            <div v-else="" class="button is-outlined is-primary is-fullwidth">
-              <p>{{ board['name'] }}</p>
-            </div>
+            <button v-if="board['name'] === 'wiki'" class="button is-primary is-fullwidth"
+                    @click="$router.push({name: 'board', params: { boardId: board['id'] } })">{{ board['name'] }}
+            </button>
+            <button v-else="" class="button is-primary is-fullwidth is-outlined"
+                    @click="$router.push({name: 'board', params: { boardId: board['id'] } })">{{ board['name'] }}
+            </button>
           </div>
 
         </div>
@@ -45,18 +45,16 @@
     },
 
     computed: {
-
       boardsByOrga(){
         if (this.$store.getters['members/members']['me']) {
-          console.log('have the boards')
           let boardsByOrga = {};
           let boards = this.$store.getters['members/members']['me']['boards'];
           boards.forEach(board => {
-            let orga = board['idOrganization'] || 'me';
-            if (!boardsByOrga[orga]) {
-              boardsByOrga[orga] = [];
+            let orgaId = board['idOrganization'] || 'me';
+            if (!boardsByOrga[orgaId]) {
+              boardsByOrga[orgaId] = [];
             }
-            boardsByOrga[orga].push(board)
+            boardsByOrga[orgaId].push(board)
           });
           return boardsByOrga
         } else {
@@ -66,21 +64,38 @@
         }
       },
       organizations(){
-        return Object.keys(this.boardsByOrga)
+        return (id) => {
+          if (this.$store.getters['organizations/organizations'][id]) {
+            return this.$store.getters['organizations/organizations'][id]['organization']['displayName']
+          } else {
+            return id
+          }
+        }
+
       },
     },
     methods: {
-      showBoard(id){
-        this.$store.dispatch('boards/setCurrent', id);
-        this.$store.dispatch('boards/get', id);
-      },
-      toggle(){
-        if (this.dropdownClass === 'dropdown') {
-          this.dropdownClass = 'dropdown is-active';
+      organizationName(id){
+        console.log('id!', this.$store.getters['organizations/organizations'])
+        if (this.$store.getters['organizations/organizations'][id]) {
+          return this.$store.getters['organizations/organizations'][id]['name']
         } else {
-          this.dropdownClass = 'dropdown';
+          return id
         }
       }
     }
+    /*methods: {
+     showBoard(id){
+     this.$store.dispatch('boards/setCurrent', id);
+     this.$store.dispatch('boards/get', id);
+     },
+     toggle(){
+     if (this.dropdownClass === 'dropdown') {
+     this.dropdownClass = 'dropdown is-active';
+     } else {
+     this.dropdownClass = 'dropdown';
+     }
+     }
+     }*/
   }
 </script>

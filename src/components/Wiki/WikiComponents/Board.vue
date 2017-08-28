@@ -2,11 +2,7 @@
   <div class="menu">
     <div class="columns">
       <div class="column">
-        <h3 class="title is-3" v-if="board.board">{{ board.board.name }}</h3>
         <aside class="menu">
-          <p class="menu-label">
-            Lists
-          </p>
           <ul class="menu-list">
             <li v-for="(value, key) in board.lists"><a @click="fetchList(value['id'])">{{ value['name'] }}</a></li>
             <li>
@@ -47,11 +43,10 @@
       },
       isEditable(){
         return this.$store.getters['boards/current']['isEditable']
-      }
+      },
     },
     methods: {
       fetchList(listId){
-        console.log('fetching ', listId)
         this.$store.dispatch('lists/setCurrent', listId);
         this.$store.dispatch('setShowList', true)
       },
@@ -67,5 +62,12 @@
         this.newList = '';
       }
     },
+    mounted(){
+      if (this.$route.params.boardId) {
+        this.$store.dispatch('boards/setCurrent',this.$route.params.boardId);
+        this.$store.dispatch('setShowList', false);
+        this.$store.dispatch('cards/setCurrent', false);
+      }
+    }
   }
 </script>

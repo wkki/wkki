@@ -16,10 +16,15 @@ export default new Router({
       name: 'wiki',
       component: Wiki
     },
-        {
+    {
       path: '/boards',
       name: 'boards',
       component: MyBoards
+    },
+    {
+      path: '/boards/:boardId',
+      name: 'board',
+      component: Wiki
     },
     {
       path: '/card/:cardId',

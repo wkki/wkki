@@ -10,6 +10,42 @@ class Card {
   }
 }
 
+let fetch = (id, apiKey, oauthToken) => {
+  let url = [BASE_URL, 'cards', id].join('/');
+  let params = Object.assign(
+    {
+      key: apiKey,
+      token: oauthToken
+    },
+    {});
+
+  return Vue.http.get(url, {params})
+    .then(response => {
+      console.log(response.status)
+      return new Card(id, response.body);
+    }, response => {
+      console.log(response.status)
+      let m = new Card(id, response.body);
+      m.error = true;
+      return m;
+    })
+};
+
+let get = (context, id) => {
+  console.log('get card', id);
+  if (id && !context.getters.cards[id]) {
+    return fetch(id, context.rootGetters.apiKey, context.rootGetters.oauthToken)
+      .then((card) => {
+        context.commit('addCard', card);
+        return card
+      })
+  } else {
+    return new Promise((resolve) => {
+      resolve(context.getters.cards[id])
+    })
+  }
+};
+
 export default {
   namespaced: true,
   state: {
@@ -24,56 +60,25 @@ export default {
       if (state.current && state.cards[state.current]) {
         return state.cards[state.current]
       } else {
+        console.log('no current card');
         return false
       }
     }
   },
   actions: {
-    fetch(context, cardId){
-      console.log('fetching card', cardId)
-      let url = [BASE_URL, 'cards', cardId].join('/');
-      let params = Object.assign(
-        {
-          key: context.rootGetters.apiKey,
-          token: context.rootGetters.oauthToken
-        },
-        {});
-
-      return Vue.http.get(url, {params})
-        .then(response => {
-          console.log(response.status)
-          return new Card(cardId, response.body);
-        }, response => {
-          console.log(response.status)
-          let m = new Card(cardId, response.body);
-          m.error = true;
-          return m;
-        })
-        .then((card) => {
-          context.commit('addCard', card);
-          return card
-        })
-        // init rest in case of getting to card from url
-        .then((card) => {
-
-          console.log(card.card);
-          let boardId = card.card.idBoard;
-          let listId = card.card.idList;
-
-          context.dispatch('boards/setCurrent', boardId, {root: true});
-          context.dispatch('lists/setCurrent', listId, {root: true});
-        })
-    },
     get(context, id){
-      if (id && !context.getters.cards[id]) {
-        context.dispatch('fetch', id)
-      } else {
-        console.log('using card', id, 'from store')
-      }
+      get(context, id)
     },
     setCurrent(context, id){
-      context.dispatch('get', id);
-      context.commit('current', id);
+      get(context, id)
+        .then((card) => {
+          if (id) {
+            let listId = card.card.idList;
+            context.dispatch('lists/setCurrent', listId, {root: true});
+          }
+          context.commit('current', id);
+          console.log('set current card to', id);
+        })
     },
     alter(context, card){
       context.commit('addCard', card);

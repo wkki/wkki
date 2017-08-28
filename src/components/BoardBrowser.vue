@@ -26,7 +26,7 @@
       return {
         username: "",
         selected: 0,
-        selectedDummy: {name: 'no user selected', id: 0},
+        selectedDummy: {name: 'no member selected', id: 0},
         selectedMe: 0,
         searching: false
       }
