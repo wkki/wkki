@@ -1,17 +1,12 @@
 # wkki
 
-> A Vue.js project
+[![Build Status](https://travis-ci.org/wkki/wkki.svg?branch=master)](https://travis-ci.org/wkki/wkki)
 
-## setup
+[wkki.github.io](https://wkki.github.io)
 
-- create a public trello board
+## pre-setup
 
-- copy wkki.conf.js.dist to wkki.conf.js and fill in your api key 
-
-### getting an api key
-
-get from https://trello.com/app-key
-
+- copy wkki.conf.js.dist to wkki.conf.js and fill in your api key from https://trello.com/app-key
 
 ## Dev Setup
 
