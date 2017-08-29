@@ -51,10 +51,10 @@ export default {
     current: false
   },
   getters: {
-    members(state){
+    members(state) {
       return state.members
     },
-    current(state){
+    current(state) {
       if (state.current && state.members[state.current]) {
         return state.members[state.current]
       } else {
@@ -62,7 +62,7 @@ export default {
         return false
       }
     },
-    myBoards(state){
+    myBoards(state) {
       if (state.members['me']) {
         return state.members['me']['boards']
       }
@@ -70,27 +70,30 @@ export default {
     }
   },
   actions: {
-    get(context, id){
+    fetch(context, id) {
+      return fetch(id, context.rootGetters.apiKey, context.rootGetters.oauthToken)
+    },
+    get(context, id) {
       get(context, id)
         .then((member) => {
           context.commit('addMember', member);
-          if(member.member.idOrganizations){
+          if (member.member.idOrganizations) {
             member.member.idOrganizations.forEach((id) => {
               context.dispatch('organizations/get', id, {root: true});
             })
           }
         })
     },
-    setCurrent(context, id){
+    setCurrent(context, id) {
       context.dispatch('get', id);
       context.commit('current', id);
     }
   },
   mutations: {
-    addMember(state, member){
+    addMember(state, member) {
       state.members = Object.assign({}, state.members, {[member.username]: member})
     },
-    current(state, id){
+    current(state, id) {
       state.current = id
     }
   }

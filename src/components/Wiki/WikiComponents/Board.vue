@@ -2,17 +2,30 @@
   <div class="menu">
     <div class="columns">
       <div class="column">
+
         <aside class="menu">
-          <ul class="menu-list">
-            <li v-for="(value, key) in board.lists"><a @click="fetchList(value['id'])">{{ value['name'] }}</a></li>
-            <li>
+          <div class="field">
+            <div class="control">
+              <div v-if="$store.getters['isLoggedIn']">
+                <input class="input" type="text" placeholder="search in board" v-model="searchStr"
+                       @keyup.enter="search()">
+              </div>
+            </div>
+          </div>
+          
+            <p class="field" v-for="(value, key) in board.lists">
+              <a class="button is-fullwidth is-dark is-outlined" @click="fetchList(value['id'])">
+                {{ value['name'] }}
+              </a>
+            </p>
               <div v-if="showInput" class="control">
                 <input class="input " type="text" placeholder="new list" v-model="newList"
                        @keyup.enter="addList">
               </div>
-            </li>
-            <li><a v-if="isEditable" @click="toggleShowInput()">+</a></li>
-          </ul>
+            <a v-if="isEditable" @click="toggleShowInput()">
+              <button class="button is-fullwidth">+</button>
+            </a>
+
         </aside>
       </div>
     </div>
@@ -24,48 +37,53 @@
 
   export default {
     name: 'menu',
-    data(){
+    data() {
       return {
         showInput: false,
         newList: '',
+        searchStr: ''
       }
     },
     computed: {
-      activeList(){
+      activeList() {
         return this.$store.getters['lists/current']
       },
-      board(){
+      board() {
         if (this.$store.getters['boards/current']) {
           return this.$store.getters['boards/current']
         } else {
           return [{name: 'loading...'}]
         }
       },
-      isEditable(){
+      isEditable() {
         return this.$store.getters['boards/current']['isEditable']
       },
     },
     methods: {
-      fetchList(listId){
+      fetchList(listId) {
         this.$store.dispatch('lists/setCurrent', listId);
         this.$store.dispatch('setShowList', true)
       },
-      toggleShowInput(){
+      toggleShowInput() {
         this.showInput = !this.showInput;
       },
-      addList(){
+      addList() {
         this.$store.dispatch('boards/addList', {
           name: this.newList,
           boardId: this.$store.getters['boards/current']['board']['id']
         });
         this.showInput = false;
         this.newList = '';
+      },
+      search() {
+        console.log(this.searchStr);
+        this.$store.dispatch('search/search', {query: this.searchStr, boardId: this.$store.getters['boards/current']['board']['id']})
+        this.$store.dispatch('setShowSearch', true);
       }
     },
-    mounted(){
+    mounted() {
       if (this.$route.params.boardId) {
-        this.$store.dispatch('boards/setCurrent',this.$route.params.boardId);
-        this.$store.dispatch('setShowList', false);
+        this.$store.dispatch('boards/setCurrent', this.$route.params.boardId);
         this.$store.dispatch('cards/setCurrent', false);
       }
     }

@@ -1,5 +1,5 @@
 <template>
-  <div class="item" v-if="!$store.getters.showList">
+  <div class="item" v-if="$store.getters.showCard">
     <template v-if="card">
       <BreadCrumbs v-bind:card="card"></BreadCrumbs>
       <div class="columns">

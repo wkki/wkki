@@ -1,44 +1,45 @@
 <template>
-  <div class="results">
-    <h2 class="title is-2">results for {{ searchResults.options.terms }}</h2>
+  <div class="results" v-if="$store.getters['showSearch']">
+    <h2 class="title is-2">results for "{{ $store.getters['search/result'].options.terms[0]['text'] }}"</h2>
     <ul>
-      <li v-for="card in searchResults.cards">
-
-        <a @click="fetchList(card.idList)">{{ list(card.idList).name }}</a> - <a @click="getItem(card.id)">{{card.name}}</a></li>
+      <template v-if="$store.getters['search/result'].cards.length > 0">
+        <li v-for="card in $store.getters['search/result'].cards">
+          <div class="box">
+            <a @click="fetchList(card.idList)">{{ listName(card.idList) }}</a> /
+            <a @click="goToCard(card.id)">{{card.name}}</a>
+          </div>
+        </li>
+      </template>
+      <template v-else="">
+        - nothing found -
+      </template>
     </ul>
   </div>
-
-
 </template>
 
 <script>
   export default {
-    computed: {
-      searchResults(){
-        return this.$store.getters.searchResults
-      }
-
-    },
     methods: {
-      list(listId){
-        return this.$store.getters.lists[listId]
+      fetchList(listId) {
+        this.$store.dispatch('lists/setCurrent', listId);
+        this.$store.dispatch('setShowList', true)
       },
-      getItem(cardId){
-        this.$router.push({name: 'card', params: {cardId: cardId}});
+      listName(id) {
+        if (this.$store.getters['lists/lists'][id]) {
+          return this.$store.getters['lists/lists'][id]['list']['name']
+        } else {
+          return 'loading...'
+        }
       },
-      fetchList(listId){
-        this.$router.push({name: 'list', params: {listId: listId}});
+      goToCard(cardId) {
+        this.$store.dispatch('setShowCard', true);
+        this.$store.dispatch('cards/setCurrent', cardId);
+        this.$router.push({name: 'card', params: {cardId}})
       }
     },
-    watch: {
-      '$route' (to, from) {
-        console.log(this.$route.query)
-        this.$store.dispatch('search', this.$route.query)
-      }
-    },
-    mounted(){
-      console.log(this.$route.query.query)
-      this.$store.dispatch('search', this.$route.query.query)
+    mounted() {
+      console.log(this.$route.query.query);
+      this.$store.dispatch('search/search', this.$route.query.query)
     }
   }
 </script>

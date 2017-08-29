@@ -37,6 +37,7 @@ let get = (context, id) => {
     return fetch(id, context.rootGetters.apiKey, context.rootGetters.oauthToken)
       .then((card) => {
         context.commit('addCard', card);
+        context.dispatch('lists/get', card['card'].idList, {root: true});
         return card
       })
   } else {
@@ -53,10 +54,10 @@ export default {
     current: false
   },
   getters: {
-    cards(state){
+    cards(state) {
       return state.cards
     },
-    current(state){
+    current(state) {
       if (state.current && state.cards[state.current]) {
         return state.cards[state.current]
       } else {
@@ -66,10 +67,16 @@ export default {
     }
   },
   actions: {
-    get(context, id){
+    fetch(context, id) {
+      return fetch(id, context.rootGetters.apiKey, context.rootGetters.oauthToken)
+        .then((card) => {
+          context.commit('addCard', card);
+        })
+    },
+    get(context, id) {
       get(context, id)
     },
-    setCurrent(context, id){
+    setCurrent(context, id) {
       get(context, id)
         .then((card) => {
           if (id) {
@@ -80,10 +87,10 @@ export default {
           console.log('set current card to', id);
         })
     },
-    alter(context, card){
+    alter(context, card) {
       context.commit('addCard', card);
     },
-    commit(context, card){
+    commit(context, card) {
       let urlCard = [BASE_URL, 'cards', card.card.id].join('/');
       let urlComment = [BASE_URL, 'cards', card.card.id, 'actions', 'comments'].join('/');
 
@@ -107,10 +114,10 @@ export default {
     },
   },
   mutations: {
-    addCard(state, card){
+    addCard(state, card) {
       state.cards = Object.assign({}, state.cards, {[card.id]: card})
     },
-    current(state, id){
+    current(state, id) {
       state.current = id
     }
   }

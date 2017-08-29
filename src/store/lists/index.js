@@ -56,10 +56,10 @@ export default {
     current: false
   },
   getters: {
-    lists(state){
+    lists(state) {
       return state.lists
     },
-    current(state){
+    current(state) {
       if (state.current && state.lists[state.current]) {
         return state.lists[state.current]
       } else {
@@ -69,10 +69,17 @@ export default {
     }
   },
   actions: {
-    get(context, id){
+    fetch(context, id) {
+      return fetch(id, context.rootGetters.apiKey, context.rootGetters.oauthToken)
+        .then((list) => {
+          context.commit('addList', list);
+          return list
+        })
+    },
+    get(context, id) {
       get(context, id)
     },
-    setCurrent(context, id){
+    setCurrent(context, id) {
       get(context, id)
         .then((list) => {
           console.log('set current list to', id);
@@ -81,7 +88,7 @@ export default {
           context.dispatch('boards/setCurrent', boardId, {root: true});
         })
     },
-    addCard(context, {name, listId}){
+    addCard(context, {name, listId}) {
       let cardUrl = [BASE_URL, 'cards'].join('/');
       let params = Object.assign({
           key: context.rootGetters.apiKey,
@@ -99,10 +106,10 @@ export default {
     }
   },
   mutations: {
-    addList(state, list){
+    addList(state, list) {
       state.lists = Object.assign({}, state.lists, {[list.id]: list})
     },
-    current(state, id){
+    current(state, id) {
       state.current = id
     }
   }

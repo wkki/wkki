@@ -42,6 +42,9 @@ let get = (context, id) => {
         context.commit('addBoard', board);
         if (board.board.idOrganization) {
           context.dispatch('organizations/get', board.board.idOrganization, {root: true});
+          board.lists.forEach((listId) => {
+            context.dispatch('lists/get', listId, {root: true});
+          })
         }
       })
   } else {
@@ -78,6 +81,12 @@ export default {
     }
   },
   actions: {
+    fetch(context, id){
+      return fetch(id, context.rootGetters.apiKey, context.rootGetters.oauthToken)
+      .then((board) => {
+        context.commit('addBoard', board);
+      })
+    },
     get(context, id){
       get(context, id)
     },

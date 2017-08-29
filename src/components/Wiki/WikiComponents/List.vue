@@ -63,6 +63,7 @@
       },
       goToCard(cardId){
         this.$store.dispatch('setShowList', false);
+        this.$store.dispatch('setShowCard', true);
         this.$store.dispatch('cards/setCurrent', cardId);
         this.$router.push({name: 'card', params: {boardId: this.$route.params.boardId, cardId}})
       }

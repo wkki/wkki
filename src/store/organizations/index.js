@@ -54,10 +54,10 @@ export default {
     current: false
   },
   getters: {
-    organizations(state){
+    organizations(state) {
       return state.organizations
     },
-    current(state){
+    current(state) {
       if (state.current && state.organizations[state.current]) {
         return state.organizations[state.current]
       } else {
@@ -66,19 +66,25 @@ export default {
     }
   },
   actions: {
-    get(context, id){
+    fetch(context, id) {
+      return fetch(id, context.rootGetters.apiKey, context.rootGetters.oauthToken)
+        .then((board) => {
+          context.commit('addOrganization', board);
+        })
+    },
+    get(context, id) {
       get(context, id)
     },
-    setCurrent(context, id){
+    setCurrent(context, id) {
       context.dispatch('get', id);
       context.commit('current', id);
     }
   },
   mutations: {
-    addOrganization(state, organization){
+    addOrganization(state, organization) {
       state.organizations = Object.assign({}, state.organizations, {[organization.id]: organization})
     },
-    current(state, id){
+    current(state, id) {
       state.current = id
     }
   }

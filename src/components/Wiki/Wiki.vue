@@ -6,6 +6,7 @@
     <List></List>
     <div class="column">
       <Card></Card>
+      <SearchResults></SearchResults>
     </div>
   </div>
 </template>
@@ -16,13 +17,15 @@
   import Board from './WikiComponents/Board.vue'
   import List from './WikiComponents/List.vue'
   import Card from './WikiComponents/Card.vue'
+  import SearchResults from './WikiComponents/SearchResults.vue'
 
   export default {
     name: 'board',
     components: {
       Board,
       Card,
-      List
+      List,
+      SearchResults
     }
   }
 

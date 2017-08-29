@@ -11,6 +11,7 @@ import boards from './boards'
 import lists from './lists'
 import cards from './cards'
 import organizations from './organizations'
+import search from './search'
 
 let localStorePrefix = window.location.host;
 let localStore = {
@@ -32,6 +33,8 @@ const store = new Vuex.Store({
     apiKey: process.env.WKKI_TRELLO_API_KEY,
     oauthToken: localStore.get('oauthToken'),
     showList: false,
+    showCard: false,
+    showSearch: false,
     currentBoard: false,
     currentCard: false
   },
@@ -44,6 +47,12 @@ const store = new Vuex.Store({
     },
     showList(state){
       return state.showList
+    },
+    showCard(state){
+      return state.showCard
+    },
+    showSearch(state){
+      return state.showSearch
     },
     isLoggedIn(state){
       return !!state.oauthToken
@@ -59,7 +68,19 @@ const store = new Vuex.Store({
       context.commit('logIn', undefined);
     },
     setShowList(context, flipTo){
-      context.commit('showList', flipTo)
+      context.commit('showList', flipTo);
+      context.commit('showCard', !flipTo);
+      context.commit('showSearch', !flipTo);
+    },
+    setShowCard(context, flipTo){
+      context.commit('showList', !flipTo);
+      context.commit('showCard', flipTo);
+      context.commit('showSearch', !flipTo);
+    },
+    setShowSearch(context, flipTo){
+      context.commit('showList', !flipTo);
+      context.commit('showCard', !flipTo);
+      context.commit('showSearch', flipTo);
     }
   },
   mutations: {
@@ -68,6 +89,12 @@ const store = new Vuex.Store({
     },
     showList(state, flipTo){
       state.showList = flipTo
+    },
+    showCard(state, flipTo){
+      state.showCard = flipTo
+    },
+    showSearch(state, flipTo){
+      state.showSearch = flipTo
     }
   },
   modules: {
@@ -75,7 +102,8 @@ const store = new Vuex.Store({
     boards,
     lists,
     cards,
-    organizations
+    organizations,
+    search
   }
 });
 
