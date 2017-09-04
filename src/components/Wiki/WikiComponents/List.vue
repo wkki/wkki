@@ -20,9 +20,9 @@
           </div>
 
         </div>
-        <a class="button is-fullwidth" v-if="isEditable" @click="toggleShowInput()">+</a>
-      </div>
 
+      </div>
+      <a class="button" v-if="isEditable" @click="toggleShowInput()">add card</a>
     </div>
   </div>
 </template>
@@ -62,7 +62,8 @@
         }
       },
       isEditable() {
-        return this.$store.getters['boards/current']['isEditable']
+        let id = this.$store.getters['boards/current']['board']['id'];
+        return this.$store.getters['boards/isEditable'](id);
       },
       showList() {
         return this.$store.getters.showList

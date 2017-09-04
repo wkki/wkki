@@ -7,7 +7,6 @@ class Board {
     this.id = id;
     this.board = board;
     this.lists = lists;
-    this.isEditable = false;
   }
 }
 
@@ -61,43 +60,50 @@ export default {
     current: false
   },
   getters: {
-    boards(state){
+    boards(state) {
       return state.boards
     },
-    current(state, getters, rootState, rootGetters){
+    current(state, getters, rootState, rootGetters) {
       if (state.current && state.boards[state.current]) {
-        let currentBoard = state.boards[state.current];
-        if (rootGetters['members/myBoards']) {
-          let isOneOfMyBoards = rootGetters['members/myBoards'].find((board) => (board.id === currentBoard.id));
-          if (isOneOfMyBoards) {
-            currentBoard.isEditable = true
-          }
-        }
-        return currentBoard
+        return state.boards[state.current]
       } else {
         console.log('no current board');
         return false
       }
+    },
+    isEditable(state, getters, rootState, rootGetters) {
+      return (id) => {
+        if (state.current && state.boards[state.current]) {
+          if (rootGetters['members/myBoards']) {
+            let isOneOfMyBoards = rootGetters['members/myBoards'].find((board) => (board.id === id));
+            console.log('isOneOfMyBoards', !!isOneOfMyBoards, id )
+            return !!isOneOfMyBoards;
+          }
+        }
+      }
     }
   },
   actions: {
-    fetch(context, id){
+    fetch(context, id) {
       return fetch(id, context.rootGetters.apiKey, context.rootGetters.oauthToken)
-      .then((board) => {
-        context.commit('addBoard', board);
-      })
+        .then((board) => {
+          context.commit('addBoard', board);
+        })
     },
-    get(context, id){
+    get(context, id) {
       get(context, id)
     },
-    setCurrent(context, id){
+    setCurrent(context, id) {
       get(context, id)
         .then((board) => {
           console.log('set current board to', id);
           context.commit('current', id);
+          if(context.rootGetters.oauthToken && !context.rootGetters['members/me']){
+            context.dispatch('members/get', 'me', {root: true})
+          }
         })
     },
-    addList(context, {name, boardId}){
+    addList(context, {name, boardId}) {
       let listUrl = [BASE_URL, 'lists'].join('/');
       let params = Object.assign({
           key: context.rootGetters.apiKey,
@@ -115,10 +121,10 @@ export default {
     }
   },
   mutations: {
-    addBoard(state, board){
+    addBoard(state, board) {
       state.boards = Object.assign({}, state.boards, {[board.id]: board})
     },
-    current(state, id){
+    current(state, id) {
       state.current = id
     }
   }

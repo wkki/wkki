@@ -45,18 +45,19 @@
       BreadCrumbs
     },
     computed: {
-      card(){
+      card() {
         if (this.$store.getters['cards/current']) {
           return this.$store.getters['cards/current']['card']
         } else {
-            console.log('no card yet...')
+          console.log('no card yet...')
           return false
         }
       },
-      isEditable(){
-        return this.$store.getters['boards/current']['isEditable']
+      isEditable() {
+        let id = this.$store.getters['boards/current']['board']['id'];
+        return this.$store.getters['boards/isEditable'](id);
       },
-      edit(){
+      edit() {
         if (this.$store.getters['cards/current'] && this.isEditable) {
           return this.$store.getters['cards/current']['edit']
         } else {
@@ -65,10 +66,10 @@
       }
     },
     methods: {
-      convert(markdownText){
+      convert(markdownText) {
         return conv.makeHtml(markdownText) || '[no text]';
       },
-      toggleEdit(){
+      toggleEdit() {
         if (this.$store.getters['cards/current'] && this.$store.getters['cards/current']['card']) {
           let card = this.$store.getters['cards/current'];
           card.edit = !(card.edit);
@@ -76,7 +77,7 @@
         }
       }
     },
-    mounted(){
+    mounted() {
       if (this.$route.params.cardId) {
         let cardId = this.$route.params.cardId;
         this.$store.dispatch('cards/setCurrent', cardId);

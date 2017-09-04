@@ -54,7 +54,10 @@
         }
       },
       isEditable() {
-        return this.$store.getters['boards/current']['isEditable']
+        if (this.$store.getters['boards/current']) {
+        let id = this.$store.getters['boards/current']['board']['id'];
+        return this.$store.getters['boards/isEditable'](id);
+        }
       },
     },
     methods: {

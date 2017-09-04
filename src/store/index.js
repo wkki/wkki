@@ -35,8 +35,6 @@ const store = new Vuex.Store({
     showList: false,
     showCard: false,
     showSearch: false,
-    currentBoard: false,
-    currentCard: false
   },
   getters: {
     apiKey(state){
