@@ -3,7 +3,6 @@
     <div class="columns">
       <div class="column">
 
-        <aside class="menu">
           <div class="field">
             <div class="control">
               <div v-if="$store.getters['isLoggedIn']">
@@ -12,7 +11,7 @@
               </div>
             </div>
           </div>
-          
+
             <p class="field" v-for="(value, key) in board.lists">
               <a class="button is-fullwidth is-dark is-outlined" @click="fetchList(value['id'])">
                 {{ value['name'] }}
@@ -26,7 +25,6 @@
               <button class="button is-fullwidth">+</button>
             </a>
 
-        </aside>
       </div>
     </div>
   </div>

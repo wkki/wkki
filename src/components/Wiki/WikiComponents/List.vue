@@ -1,26 +1,30 @@
 <template>
   <div>
-  <div class="column" v-if="showList">
-    <aside class="menu">
-      <p class="menu-label">
-        Cards
-      </p>
+    <div class="column" v-if="showList && listSorted">
+      <div class="columns is-multiline">
 
-      <ul class="menu-list">
-        <li v-for="card in list"><a @click="goToCard(card.id)">{{card.name}}</a></li>
-        <li>
+        <div class="column" v-for="firstChar in Object.keys(listSorted).sort()">
+
+          <h4 class="title is-4">{{firstChar}}</h4>
+          <table class="table">
+            <tbody>
+            <tr v-for="card in listSorted[firstChar]">
+              <td><a @click="goToCard(card.id)">{{card.name}}</a></td>
+            </tr>
+            </tbody>
+          </table>
+
           <div v-if="showInput" class="control">
             <input class="input " type="text" placeholder="new card" v-model="newCard"
                    @keyup.enter="addCard">
           </div>
-        </li>
 
-        <li><a v-if="isEditable" @click="toggleShowInput()">+</a></li>
-      </ul>
+        </div>
+        <a class="button is-fullwidth" v-if="isEditable" @click="toggleShowInput()">+</a>
+      </div>
 
-    </aside>
-  </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -28,32 +32,47 @@
 
   export default {
     name: 'menu',
-    data(){
+    data() {
       return {
         showInput: false,
         newCard: ''
       }
     },
     computed: {
-      list(){
+      list() {
         if (this.$store.getters['lists/current']) {
           return this.$store.getters['lists/current']['cards']
         } else {
           return [{name: 'loading...'}]
         }
       },
-      isEditable(){
-          return this.$store.getters['boards/current']['isEditable']
+      listSorted() {
+        if (this.$store.getters['lists/current']) {
+          let cardsByFirstChar = {};
+          this.$store.getters['lists/current']['cards'].forEach(card => {
+            let char = card['name'][0].toLowerCase();
+            if (!cardsByFirstChar[char]) {
+              cardsByFirstChar[char] = [];
+            }
+            cardsByFirstChar[char].push(card);
+          });
+          return cardsByFirstChar
+        } else {
+          return false
+        }
       },
-      showList(){
-          return this.$store.getters.showList
+      isEditable() {
+        return this.$store.getters['boards/current']['isEditable']
+      },
+      showList() {
+        return this.$store.getters.showList
       }
     },
     methods: {
-      toggleShowInput(){
+      toggleShowInput() {
         this.showInput = !this.showInput;
       },
-      addCard(){
+      addCard() {
         this.$store.dispatch('lists/addCard', {
           name: this.newCard,
           listId: this.$store.getters['lists/current']['list']['id']
@@ -61,7 +80,7 @@
         this.showInput = false;
         this.newCard = '';
       },
-      goToCard(cardId){
+      goToCard(cardId) {
         this.$store.dispatch('setShowList', false);
         this.$store.dispatch('setShowCard', true);
         this.$store.dispatch('cards/setCurrent', cardId);

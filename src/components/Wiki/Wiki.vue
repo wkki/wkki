@@ -3,8 +3,9 @@
     <div class="column is-one-quarter">
       <Board></Board>
     </div>
-    <List></List>
+
     <div class="column">
+      <List></List>
       <Card></Card>
       <SearchResults></SearchResults>
     </div>
