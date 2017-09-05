@@ -5,7 +5,7 @@
 
         <div class="field">
           <div class="control">
-            <div v-if="$store.getters['isLoggedIn'] && $store.getters['boards/current']">
+            <div v-if="$store.getters['boards/current']">
               <input class="input" type="text" placeholder="search in board" v-model="searchStr"
                      @keyup.enter="search()">
             </div>
