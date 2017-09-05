@@ -16,7 +16,6 @@
           <EditItem></EditItem>
         </div>
       </div>
-
       <div class="level">
         <a v-bind:href="card.url">go to Card</a><br>
         <button v-if="isEditable" @click="toggleEdit()" class="button">edit Card</button>
@@ -54,8 +53,12 @@
         }
       },
       isEditable() {
-        let id = this.$store.getters['boards/current']['board']['id'];
-        return this.$store.getters['boards/isEditable'](id);
+        if (this.$store.getters['boards/current']) {
+          let id = this.$store.getters['boards/current']['board']['id'];
+          return this.$store.getters['boards/isEditable'](id);
+        } else {
+          return false
+        }
       },
       edit() {
         if (this.$store.getters['cards/current'] && this.isEditable) {
@@ -81,6 +84,7 @@
       if (this.$route.params.cardId) {
         let cardId = this.$route.params.cardId;
         this.$store.dispatch('cards/setCurrent', cardId);
+        this.$store.dispatch('setShowCard', true)
       }
     },
   }
