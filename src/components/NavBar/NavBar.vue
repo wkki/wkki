@@ -8,7 +8,7 @@
         </a>
         <div class="navbar-item is-hidden-desktop">
           <div class="navbar-item" v-if="$store.getters['boards/current']">
-            <h6 class="title is-5">{{ $store.getters['boards/current']['board']['name'] }}</h6>
+            <h6 class="title is-5"><a @click="$store.dispatch('setShowBoardSettings')">{{ $store.getters['boards/current']['board']['name'] }}</a></h6>
           </div>
         </div>
         <div :class="navbarBurgerClass" data-target="nav-menu" @click="toggle()">

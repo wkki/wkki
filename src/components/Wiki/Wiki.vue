@@ -8,6 +8,7 @@
       <List></List>
       <Card></Card>
       <SearchResults></SearchResults>
+      <BoardSettings></BoardSettings>
     </div>
   </div>
 </template>
@@ -19,6 +20,7 @@
   import List from './WikiComponents/List.vue'
   import Card from './WikiComponents/Card.vue'
   import SearchResults from './WikiComponents/SearchResults.vue'
+  import BoardSettings from './WikiComponents/BoardSettings.vue'
 
   export default {
     name: 'board',
@@ -26,7 +28,8 @@
       Board,
       Card,
       List,
-      SearchResults
+      SearchResults,
+      BoardSettings
     }
   }
 

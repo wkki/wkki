@@ -3,31 +3,43 @@ import Vue from 'vue'
 const BASE_URL = 'https://trello.com/1';
 
 class Board {
-  constructor(id, board, lists) {
+  constructor(id, board, lists, members) {
     this.id = id;
     this.board = board;
     this.lists = lists;
+    this.members = members
   }
 }
 
 let fetch = (id, apiKey, oauthToken) => {
   let boardUrl = [BASE_URL, 'boards', id].join('/');
   let listsUrl = [BASE_URL, 'boards', id, 'lists'].join('/');
+  let membersUrl = [BASE_URL, 'boards', id, 'members'].join('/');
   let params = Object.assign(
     {
       key: apiKey,
       token: oauthToken
     },
     {});
+  let memberParams = Object.assign(
+    {
+      key: apiKey,
+      token: oauthToken
+    },
+    {
+      fields: 'all'
+    });
   return Promise.all([
     Vue.http.get(boardUrl, {params}),
-    Vue.http.get(listsUrl, {params})
+    Vue.http.get(listsUrl, {params}),
+    Vue.http.get(membersUrl, {params: memberParams})
   ])
-    .then(([boardResponse, listsResponse]) => {
-      console.log('fetch board', boardResponse.status, listsResponse.status);
-      return new Board(id, boardResponse.body, listsResponse.body);
-    }, ([boardResponse, listsResponse]) => {
-      let m = new Board(id, boardResponse.body, listsResponse.body);
+    .then(([boardResponse, listsResponse, membersResponse]) => {
+      console.log('fetch board', boardResponse.status, listsResponse.status, membersResponse);
+      return new Board(id, boardResponse.body, listsResponse.body, membersResponse.body);
+    }, ([boardResponse, listsResponse, membersResponse]) => {
+    console.log('fetch board', boardResponse.status, listsResponse.status, membersResponse);
+      let m = new Board(id, boardResponse.body, listsResponse.body, membersResponse.body);
       m.error = true;
       return m;
     })
@@ -76,7 +88,7 @@ export default {
         if (state.current && state.boards[state.current]) {
           if (rootGetters['members/myBoards']) {
             let isOneOfMyBoards = rootGetters['members/myBoards'].find((board) => (board.id === id));
-            console.log('isOneOfMyBoards', !!isOneOfMyBoards, id )
+            console.log('isOneOfMyBoards', !!isOneOfMyBoards, id)
             return !!isOneOfMyBoards;
           }
         }
@@ -98,7 +110,7 @@ export default {
         .then((board) => {
           console.log('set current board to', id);
           context.commit('current', id);
-          if(context.rootGetters.oauthToken && !context.rootGetters['members/me']){
+          if (context.rootGetters.oauthToken && !context.rootGetters['members/me']) {
             context.dispatch('members/get', 'me', {root: true})
           }
         })

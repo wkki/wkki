@@ -15,15 +15,15 @@ import search from './search'
 
 let localStorePrefix = window.location.host;
 let localStore = {
-  get(key){
+  get(key) {
     console.log('prefix', localStorePrefix);
     return window.localStorage.getItem(localStorePrefix + key)
   },
-  set(key, value){
+  set(key, value) {
     console.log('prefix', localStorePrefix);
     window.localStorage.setItem(localStorePrefix + key, value)
   },
-  rm(key){
+  rm(key) {
     window.localStorage.removeItem(localStorePrefix + key);
   }
 };
@@ -35,64 +35,80 @@ const store = new Vuex.Store({
     showList: false,
     showCard: false,
     showSearch: false,
+    showBoardSettings: false
   },
   getters: {
-    apiKey(state){
+    apiKey(state) {
       return state.apiKey
     },
-    oauthToken(state){
+    oauthToken(state) {
       return state.oauthToken
     },
-    showList(state){
+    showList(state) {
       return state.showList
     },
-    showCard(state){
+    showCard(state) {
       return state.showCard
     },
-    showSearch(state){
+    showSearch(state) {
       return state.showSearch
     },
-    isLoggedIn(state){
+    showBoardSettings(state) {
+      return state.showBoardSettings
+    },
+    isLoggedIn(state) {
       return !!state.oauthToken
     }
   },
   actions: {
-    logIn(context, oauthToken){
+    logIn(context, oauthToken) {
       localStore.set('oauthToken', oauthToken);
       context.commit('logIn', oauthToken);
     },
-    logOut(context){
+    logOut(context) {
       localStore.rm('oauthToken');
       context.commit('logIn', undefined);
     },
-    setShowList(context, flipTo){
-      context.commit('showList', flipTo);
-      context.commit('showCard', !flipTo);
-      context.commit('showSearch', !flipTo);
+    setShowList(context) {
+      context.commit('showList', true);
+      context.commit('showCard', false);
+      context.commit('showSearch', false);
+      context.commit('showBoardSettings', false);
     },
-    setShowCard(context, flipTo){
-      context.commit('showList', !flipTo);
-      context.commit('showCard', flipTo);
-      context.commit('showSearch', !flipTo);
+    setShowCard(context) {
+      context.commit('showList', false);
+      context.commit('showCard', true);
+      context.commit('showSearch', false);
+      context.commit('showBoardSettings', false);
     },
-    setShowSearch(context, flipTo){
-      context.commit('showList', !flipTo);
-      context.commit('showCard', !flipTo);
-      context.commit('showSearch', flipTo);
+    setShowSearch(context) {
+      context.commit('showList', false);
+      context.commit('showCard', false);
+      context.commit('showSearch', true);
+      context.commit('showBoardSettings', false);
+    },
+    setShowBoardSettings(context, flipTo) {
+      context.commit('showList', false);
+      context.commit('showCard', false);
+      context.commit('showSearch', false);
+      context.commit('showBoardSettings', true);
     }
   },
   mutations: {
-    logIn(state, oauthToken){
+    logIn(state, oauthToken) {
       state.oauthToken = oauthToken
     },
-    showList(state, flipTo){
+    showList(state, flipTo) {
       state.showList = flipTo
     },
-    showCard(state, flipTo){
+    showCard(state, flipTo) {
       state.showCard = flipTo
     },
-    showSearch(state, flipTo){
+    showSearch(state, flipTo) {
       state.showSearch = flipTo
+    },
+    showBoardSettings(state, flipTo){
+      state.showBoardSettings = flipTo
     }
   },
   modules: {
