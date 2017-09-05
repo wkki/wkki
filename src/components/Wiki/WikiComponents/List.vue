@@ -4,9 +4,12 @@
       <div class="columns is-multiline">
 
         <div class="column" v-for="firstChar in Object.keys(listSorted).sort()">
-
-          <h4 class="title is-4">{{firstChar}}</h4>
           <table class="table">
+            <thead>
+            <tr>
+              <th>{{firstChar}}</th>
+            </tr>
+            </thead>
             <tbody>
             <tr v-for="card in listSorted[firstChar]">
               <td><a @click="goToCard(card.id)">{{card.name}}</a></td>

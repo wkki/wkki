@@ -42,7 +42,7 @@ let get = (context, id) => {
       })
   } else {
     return new Promise((resolve) => {
-      resolve(context.getters.lists[id])
+      resolve(context.getters.organizations[id])
     })
   }
 };

@@ -39,7 +39,7 @@ let get = (context, id) => {
     return fetch(id, context.rootGetters.apiKey, context.rootGetters.oauthToken)
   } else {
     return new Promise((resolve) => {
-      resolve(context.getters.lists[id])
+      resolve(context.getters.members[id])
     })
   }
 };
