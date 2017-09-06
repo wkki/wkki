@@ -4,17 +4,49 @@
       <BreadCrumbs v-bind:card="card"></BreadCrumbs>
       <div class="columns">
         <div class="column">
-          <section class="hero is-light">
-            <div class="hero-body">
+
+          <article class="media">
+
+            <div class="media-content">
               <div class="content">
                 <div v-html="convert(card.desc)"></div>
               </div>
             </div>
-          </section>
+
+            <figure class="media-right">
+
+              <div class="column" v-if="card.attachments.length > 0">
+
+                <div class="tile is-ancestor">
+                  <div class="tile is-vertical is-8">
+                    <div class="tile is-vertical">
+
+                      <div class="tile is-parent " v-for="attachment in card.attachments">
+                        <article class="tile is-child box">
+
+                          <figure class="image" v-if="attachment['previews'].length > 0">
+
+                            <a :href="attachment['url']">{{ attachment['name'] }}<img :src="attachment['previews'][3]['url']"></a>
+                          </figure>
+
+                          <a v-else="" :href="attachment['url']">{{ attachment['name'] }}</a>
+                        </article>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </figure>
+
+          </article>
         </div>
+
         <div v-if="edit" class="column">
           <EditItem></EditItem>
         </div>
+
       </div>
       <div class="level">
         <a v-bind:href="card.url">go to Card</a><br>
