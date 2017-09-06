@@ -3,44 +3,47 @@
     <template v-if="card">
       <BreadCrumbs v-bind:card="card"></BreadCrumbs>
       <div class="columns">
+
         <div class="column">
 
-          <article class="media">
+          <div class="columns is-multiline">
+            <div class="column">
 
-            <div class="media-content">
-              <div class="content">
-                <div v-html="convert(card.desc)"></div>
+              <div class="media-content">
+                <div class="content">
+                  <div v-html="convert(card.desc)"></div>
+                </div>
               </div>
             </div>
 
-            <figure class="media-right">
 
-              <div class="column" v-if="card.attachments.length > 0">
 
-                <div class="tile is-ancestor">
-                  <div class="tile is-vertical is-8">
-                    <div class="tile is-vertical">
+          <div class="column" v-if="card.attachments.length > 0">
 
-                      <div class="tile is-parent " v-for="attachment in card.attachments">
-                        <article class="tile is-child box">
+            <div class="tile is-ancestor">
+              <div class="tile is-parent">
+                <div class="tile">
 
-                          <figure class="image" v-if="attachment['previews'].length > 0">
+                  <div class="tile is-parent" v-for="attachment in card.attachments">
 
-                            <a :href="attachment['url']">{{ attachment['name'] }}<img :src="attachment['previews'][3]['url']"></a>
-                          </figure>
+                    <article class="tile is-child box ">
+{{ attachment['name'] }}
+                      <figure v-if="attachment['previews'].length > 0" class="image is-square" >
+                        <a :href="attachment['url']"><img style="object-fit: contain;"
+                          :src="attachment['previews'][2]['url']"></a>
+                      </figure>
 
-                          <a v-else="" :href="attachment['url']">{{ attachment['name'] }}</a>
-                        </article>
-                      </div>
+                      <a v-else="" :href="attachment['url']">download</a>
+                    </article>
 
-                    </div>
                   </div>
+
                 </div>
-
               </div>
-            </figure>
+            </div>
 
-          </article>
+          </div>
+        </div>
         </div>
 
         <div v-if="edit" class="column">
