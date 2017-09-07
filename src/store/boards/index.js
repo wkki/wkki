@@ -41,8 +41,8 @@ let get = (context, id) => {
         context.commit('addBoard', board);
         if (board.board.idOrganization) {
           context.dispatch('organizations/get', board.board.idOrganization, {root: true});
-          board.lists.forEach((listId) => {
-            context.dispatch('lists/get', listId, {root: true});
+          board.lists.forEach((list) => {
+            context.dispatch('lists/get', list.idList, {root: true});
           })
         }
       })

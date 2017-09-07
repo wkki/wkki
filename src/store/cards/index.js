@@ -17,7 +17,9 @@ let fetch = (id, apiKey, oauthToken) => {
       key: apiKey,
       token: oauthToken
     },
-    {});
+    {
+      attachments: true
+    });
 
   return Vue.http.get(url, {params})
     .then(response => {
@@ -37,6 +39,7 @@ let get = (context, id) => {
     return fetch(id, context.rootGetters.apiKey, context.rootGetters.oauthToken)
       .then((card) => {
         context.commit('addCard', card);
+        console.log('fetching list with id ', card['card'].idList)
         context.dispatch('lists/get', card['card'].idList, {root: true});
         return card
       })
