@@ -1,27 +1,22 @@
-import Vue from 'vue'
+import HTTP from '../http';
 
-const BASE_URL = 'https://trello.com/1';
+let {http,} = HTTP;
 
 
-let search = (query, boardId, apiKey, oauthToken) => {
-  let boardUrl = [BASE_URL, 'search',].join('/');
+let search = (query, boardId) => {
+  let boardUrl = ['search',].join('/');
   query += ' is:open';
-  let params = Object.assign(
-    {
-      key: apiKey,
-      token: oauthToken
-    },
-    {
-      query: query,
-      idBoards: boardId
-    });
-  return Vue.http.get(boardUrl, {params})
+  let params = {
+    query: query,
+    idBoards: boardId
+  }
+  return http.get(boardUrl, {params})
     .then((searchResponse) => {
       console.log('search res', searchResponse.status);
-      return searchResponse.body
+      return searchResponse.data
     }, (searchResponse) => {
       console.log('search res', searchResponse.status);
-      return searchResponse.body
+      return searchResponse.data
     })
 };
 
@@ -31,23 +26,23 @@ export default {
     result: {}
   },
   getters: {
-    result(state){
+    result(state) {
       return state.result
     }
   },
   actions: {
     search(context, {query, boardId}) {
-      return search(query, boardId, context.rootGetters.apiKey, context.rootGetters.oauthToken)
+      return search(query, boardId)
         .then((result) => {
           context.commit('setResult', result);
-          result.cards.forEach((card) =>{
+          result.cards.forEach((card) => {
             context.dispatch('cards/get', card.id, {root: true})
           })
         })
     }
   },
   mutations: {
-    setResult(state, result){
+    setResult(state, result) {
       state.result = Object.assign({}, result)
     }
   }

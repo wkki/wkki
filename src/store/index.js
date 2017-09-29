@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import VueResource from 'vue-resource'
+import HTTP from './http';
+let {http, setToken} = HTTP;
 
 Vue.use(Vuex);
 Vue.use(VueResource);
@@ -28,9 +30,10 @@ let localStore = {
   }
 };
 
+setToken(localStore.get('oauthToken'));
+
 const store = new Vuex.Store({
   state: {
-    apiKey: process.env.WKKI_TRELLO_API_KEY,
     oauthToken: localStore.get('oauthToken'),
     showList: false,
     showCard: false,
@@ -58,7 +61,9 @@ const store = new Vuex.Store({
   },
   actions: {
     logIn(context, oauthToken){
+      console.log('login http', http)
       localStore.set('oauthToken', oauthToken);
+      setToken(oauthToken, context.getters['apiKey']);
       context.commit('logIn', oauthToken);
     },
     logOut(context){

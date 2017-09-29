@@ -1,6 +1,5 @@
-import Vue from 'vue'
-
-const BASE_URL = 'https://trello.com/1';
+import HTTP from '../http';
+let {http, } = HTTP;
 
 class List {
   constructor(id, list, cards) {
@@ -10,25 +9,19 @@ class List {
   }
 }
 
-let fetch = (id, apiKey, oauthToken) => {
-  console.log('fetching list with ', id, apiKey, oauthToken)
-  let listUrl = [BASE_URL, 'lists', id].join('/');
-  let cardsUrl = [BASE_URL, 'lists', id, 'cards'].join('/');
-  let params = Object.assign(
-    {
-      key: apiKey,
-      token: oauthToken
-    },
-    {});
+let fetch = (id) => {
+  console.log('fetching list with ', id);
+  let listUrl = ['lists', id].join('/');
+  let cardsUrl = ['lists', id, 'cards'].join('/');
   return Promise.all([
-    Vue.http.get(cardsUrl, {params}),
-    Vue.http.get(listUrl, {params})
+    http.get(cardsUrl),
+    http.get(listUrl)
   ])
     .then(([cardsResponse, listResponse]) => {
       console.log('fetch list', cardsResponse.status, listResponse.status);
-      return new List(id, listResponse.body, cardsResponse.body);
+      return new List(id, listResponse.data, cardsResponse.data);
     }, ([cardsResponse, listResponse]) => {
-      let m = new List(id, listResponse.body, cardsResponse.body);
+      let m = new List(id, listResponse.data, cardsResponse.data);
       m.error = true;
       return m;
     })
@@ -37,7 +30,7 @@ let fetch = (id, apiKey, oauthToken) => {
 let get = (context, id) => {
   console.log('get list', id);
   if (id && !context.getters.lists[id]) {
-    return fetch(id, context.rootGetters.apiKey, context.rootGetters.oauthToken)
+    return fetch(id)
       .then((list) => {
         context.commit('addList', list);
         return list
@@ -70,7 +63,7 @@ export default {
   },
   actions: {
     fetch(context, id) {
-      return fetch(id, context.rootGetters.apiKey, context.rootGetters.oauthToken)
+      return fetch(id)
         .then((list) => {
           context.commit('addList', list);
           return list
@@ -89,17 +82,13 @@ export default {
         })
     },
     addCard(context, {name, listId}) {
-      let cardUrl = [BASE_URL, 'cards'].join('/');
-      let params = Object.assign({
-          key: context.rootGetters.apiKey,
-          token: context.rootGetters.oauthToken
-        },
+      let cardUrl = ['cards'].join('/');
+      let params =
         {
           name: name,
           idList: listId,
-        });
-
-      Vue.http.post(cardUrl, params)
+        };
+      http.post(cardUrl, params)
         .then(() => {
           context.dispatch('fetch', listId)
         })

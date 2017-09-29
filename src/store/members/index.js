@@ -1,6 +1,5 @@
-import Vue from 'vue'
-
-const BASE_URL = 'https://trello.com/1';
+import HTTP from '../http';
+let {http, } = HTTP;
 
 class Member {
   constructor(username, member, boards) {
@@ -10,24 +9,19 @@ class Member {
   }
 }
 
-let fetch = (id, apiKey, oauthToken) => {
-  let memberUrl = [BASE_URL, 'members', id].join('/');
-  let boardsUrl = [BASE_URL, 'members', id, 'boards?filter=open'].join('/');
-  let params = Object.assign(
-    {
-      key: apiKey,
-      token: oauthToken
-    },
-    {});
+let fetch = (id) => {
+  let memberUrl = ['members', id].join('/');
+  let boardsUrl = ['members', id, 'boards?filter=open'].join('/');
+
   return Promise.all([
-    Vue.http.get(memberUrl, {params}),
-    Vue.http.get(boardsUrl, {params})
+    http.get(memberUrl),
+    http.get(boardsUrl)
   ])
     .then(([memberResponse, boardResponse]) => {
       console.log('fetch member', memberResponse.status, boardResponse.status);
-      return new Member(id, memberResponse.body, boardResponse.body);
+      return new Member(id, memberResponse.data, boardResponse.data);
     }, ([memberResponse, boardResponse]) => {
-      let m = new Member(id, memberResponse.body, boardResponse.body);
+      let m = new Member(id, memberResponse.data, boardResponse.data);
       m.error = true;
       return m;
     })
@@ -36,7 +30,7 @@ let fetch = (id, apiKey, oauthToken) => {
 let get = (context, id) => {
   console.log('get member', id);
   if (id && !context.getters.members[id]) {
-    return fetch(id, context.rootGetters.apiKey, context.rootGetters.oauthToken)
+    return fetch(id)
   } else {
     return new Promise((resolve) => {
       resolve(context.getters.members[id])
@@ -71,7 +65,7 @@ export default {
   },
   actions: {
     fetch(context, id) {
-      return fetch(id, context.rootGetters.apiKey, context.rootGetters.oauthToken)
+      return fetch(id)
     },
     get(context, id) {
       get(context, id)

@@ -1,6 +1,5 @@
-import Vue from 'vue'
-
-const BASE_URL = 'https://trello.com/1';
+import HTTP from '../http';
+let {http, } = HTTP;
 
 class Organization {
   constructor(id, organization, boards) {
@@ -10,24 +9,19 @@ class Organization {
   }
 }
 
-let fetch = (id, apiKey, oauthToken) => {
-  let organizationrUrl = [BASE_URL, 'organizations', id].join('/');
-  let boardsUrl = [BASE_URL, 'organizations', id, 'boards'].join('/');
-  let params = Object.assign(
-    {
-      key: apiKey,
-      token: oauthToken
-    },
-    {});
+let fetch = (id) => {
+  let organizationrUrl = ['organizations', id].join('/');
+  let boardsUrl = ['organizations', id, 'boards'].join('/');
+
   return Promise.all([
-    Vue.http.get(organizationrUrl, {params}),
-    Vue.http.get(boardsUrl, {params})
+    http.get(organizationrUrl),
+    http.get(boardsUrl)
   ])
     .then(([organizationResponse, boardResponse]) => {
       console.log('fetch organization', organizationResponse.status, boardResponse.status);
-      return new Organization(id, organizationResponse.body, boardResponse.body);
+      return new Organization(id, organizationResponse.data, boardResponse.data);
     }, ([organizationResponse, boardResponse]) => {
-      let m = new Organization(id, organizationResponse.body, boardResponse.body);
+      let m = new Organization(id, organizationResponse.data, boardResponse.data);
       m.error = true;
       return m;
     })
@@ -35,7 +29,7 @@ let fetch = (id, apiKey, oauthToken) => {
 
 let get = (context, id) => {
   if (id && !context.getters.organizations[id]) {
-    return fetch(id, context.rootGetters.apiKey, context.rootGetters.oauthToken)
+    return fetch(id)
       .then((board) => {
         context.commit('addOrganization', board);
         return board
@@ -67,7 +61,7 @@ export default {
   },
   actions: {
     fetch(context, id) {
-      return fetch(id, context.rootGetters.apiKey, context.rootGetters.oauthToken)
+      return fetch(id)
         .then((board) => {
           context.commit('addOrganization', board);
         })

@@ -1,33 +1,29 @@
 import Vue from 'vue'
-
-const BASE_URL = 'https://trello.com/1';
+import HTTP from '../http';
+let {http, } = HTTP;
 
 class Board {
   constructor(id, board, lists) {
     this.id = id;
     this.board = board;
     this.lists = lists;
+    this.isInitialized = false;
   }
 }
 
-let fetch = (id, apiKey, oauthToken) => {
-  let boardUrl = [BASE_URL, 'boards', id].join('/');
-  let listsUrl = [BASE_URL, 'boards', id, 'lists'].join('/');
-  let params = Object.assign(
-    {
-      key: apiKey,
-      token: oauthToken
-    },
-    {});
+let fetch = (id) => {
+  let boardUrl = ['boards', id].join('/');
+  let listsUrl = ['boards', id, 'lists'].join('/');
+
   return Promise.all([
-    Vue.http.get(boardUrl, {params}),
-    Vue.http.get(listsUrl, {params})
+    http.get(boardUrl),
+    http.get(listsUrl)
   ])
     .then(([boardResponse, listsResponse]) => {
-      console.log('fetch board', boardResponse.status, listsResponse.status);
-      return new Board(id, boardResponse.body, listsResponse.body);
+      console.log('fetch board', boardResponse, listsResponse);
+      return new Board(id, boardResponse.data, listsResponse.data);
     }, ([boardResponse, listsResponse]) => {
-      let m = new Board(id, boardResponse.body, listsResponse.body);
+      let m = new Board(id, boardResponse.data, listsResponse.data);
       m.error = true;
       return m;
     })
@@ -36,7 +32,7 @@ let fetch = (id, apiKey, oauthToken) => {
 let get = (context, id) => {
   console.log('get board', id);
   if (id && !context.getters.boards[id]) {
-    return fetch(id, context.rootGetters.apiKey, context.rootGetters.oauthToken)
+    return fetch(id)
       .then((board) => {
         context.commit('addBoard', board);
         if (board.board.idOrganization) {
@@ -76,7 +72,7 @@ export default {
         if (state.current && state.boards[state.current]) {
           if (rootGetters['members/myBoards']) {
             let isOneOfMyBoards = rootGetters['members/myBoards'].find((board) => (board.id === id));
-            console.log('isOneOfMyBoards', !!isOneOfMyBoards, id )
+            console.log('isOneOfMyBoards', !!isOneOfMyBoards, id)
             return !!isOneOfMyBoards;
           }
         }
@@ -85,7 +81,7 @@ export default {
   },
   actions: {
     fetch(context, id) {
-      return fetch(id, context.rootGetters.apiKey, context.rootGetters.oauthToken)
+      return fetch(id)
         .then((board) => {
           context.commit('addBoard', board);
         })
@@ -98,23 +94,19 @@ export default {
         .then((board) => {
           console.log('set current board to', id);
           context.commit('current', id);
-          if(context.rootGetters.oauthToken && !context.rootGetters['members/me']){
+          if (context.rootGetters.oauthToken && !context.rootGetters['members/me']) {
             context.dispatch('members/get', 'me', {root: true})
           }
         })
     },
     addList(context, {name, boardId}) {
-      let listUrl = [BASE_URL, 'lists'].join('/');
-      let params = Object.assign({
-          key: context.rootGetters.apiKey,
-          token: context.rootGetters.oauthToken
-        },
-        {
-          name: name,
-          idBoard: boardId,
-        });
+      let listUrl = ['lists'].join('/');
+      let params = {
+        name: name,
+        idBoard: boardId,
+      };
 
-      Vue.http.post(listUrl, params)
+      http.post(listUrl, params)
         .then(() => {
           context.dispatch('fetch', boardId)
         })
