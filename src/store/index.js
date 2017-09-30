@@ -1,12 +1,10 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import VueResource from 'vue-resource'
 import HTTP from './http';
 let {http, setToken} = HTTP;
 
 Vue.use(Vuex);
-Vue.use(VueResource);
 
 import members from './members'
 import boards from './boards'
