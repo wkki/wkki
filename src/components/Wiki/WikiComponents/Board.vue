@@ -12,12 +12,15 @@
           </div>
         </div>
 
-          <p class="field" v-for="key in Object.keys(board.lists).sort()">
-            <a class="button is-fullwidth is-dark is-outlined" @click="fetchList(board.lists[key]['id'])">
-              {{ board.lists[key]['name'] }}
-            </a>
-          </p>
+        <h5 class="title is-5">{{ currentTreePath.join('/') }}</h5>
 
+        <a class="button is-fullwidth is-dark is-outlined" v-if="currentTreePath.length !== 0" @click="goBack()">..</a>
+
+        <p class="field" v-for="key in Object.keys(currentTree).sort()">
+          <a class="button is-fullwidth is-dark is-outlined" @click="addToTreePath(key)">
+            {{ key }}
+          </a>
+        </p>
 
         <div v-if="showInput" class="control">
           <input class="input " type="text" placeholder="new list" v-model="newList"
@@ -41,7 +44,8 @@
       return {
         showInput: false,
         newList: '',
-        searchStr: ''
+        searchStr: '',
+        currentTreePath: []
       }
     },
     computed: {
@@ -61,8 +65,68 @@
           return this.$store.getters['boards/isEditable'](id);
         }
       },
+      currentTreeNode(){
+        let currentNode = this.boardAsTree();
+        this.currentTreePath.forEach(key => {
+          currentNode = currentNode[key]
+        });
+        return currentNode
+      },
+
+      currentTree() {
+        if (!this.boardAsTree()) {
+          return {}
+        } else if (Object.keys(this.currentTreePath).length === 0) {
+          return this.boardAsTree();
+        } else {
+          return this.currentTreeNode;
+        }
+      }
     },
     methods: {
+
+      boardAsTree() {
+        // todo: could be in store...?
+        if (this.$store.getters['boards/current']) {
+          let tree = {};
+          let lists = this.$store.getters['boards/current']['lists'];
+          lists.forEach(list => {
+            let path = list['name'].split('/');
+            let treeState = tree;
+            path.forEach(element => {
+              if (!treeState[element]) {
+                treeState[element] = {};
+              }
+              treeState = treeState[element]
+            });
+          });
+          return tree
+        }
+      },
+
+      addToTreePath(key){
+        this.currentTreePath.push(key)
+      },
+
+      goBack(){
+        this.currentTreePath.pop()
+      },
+
+      listSorted() {
+        if (this.$store.getters['lists/current']) {
+          let cardsByFirstChar = {};
+          this.$store.getters['lists/current']['cards'].forEach(card => {
+            let char = card['name'][0].toLowerCase();
+            if (!cardsByFirstChar[char]) {
+              cardsByFirstChar[char] = [];
+            }
+            cardsByFirstChar[char].push(card);
+          });
+          return cardsByFirstChar
+        } else {
+          return false
+        }
+      },
       fetchList(listId) {
         this.$store.dispatch('lists/setCurrent', listId);
         this.$store.dispatch('setShowList', true)
