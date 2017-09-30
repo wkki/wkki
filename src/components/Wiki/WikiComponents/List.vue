@@ -16,16 +16,20 @@
             </tr>
             </tbody>
           </table>
+        </div>
+      </div>
 
+      <div class="columns is-multiline">
+        <div class="column">
           <div v-if="showInput" class="control">
             <input class="input " type="text" placeholder="new card" v-model="newCard"
                    @keyup.enter="addCard">
           </div>
 
+          <a class="button" v-if="isEditable" @click="toggleShowInput()">add card</a>
         </div>
-
       </div>
-      <a class="button" v-if="isEditable" @click="toggleShowInput()">add card</a>
+
     </div>
   </div>
 </template>
