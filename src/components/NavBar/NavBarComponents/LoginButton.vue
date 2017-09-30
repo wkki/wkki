@@ -9,7 +9,7 @@
   export default {
     computed: {
       authUrl(){
-        return "https://trello.com/1/authorize?expiration=never&scope=read,write&callback_method=fragment&name=wkki&key=" + this.$store.getters.apiKey + "&return_url=" + window.location.origin
+        return "https://trello.com/1/authorize?name=wkki.github.io&expiration=never&scope=read,write&callback_method=fragment&key=" + process.env.WKKI_TRELLO_API_KEY + "&return_url=" + window.location.origin
       }
     }
   }

@@ -10,7 +10,7 @@ let http = axios.create({
 });
 
 let setToken = (oauthToken) => {
-  console.log('updating axios')
+  console.log('updating axios');
   http.defaults.params.token = oauthToken
 };
 

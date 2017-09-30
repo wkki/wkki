@@ -14,7 +14,15 @@ export default new Router({
     {
       path: '/',
       name: 'wiki',
-      component: Wiki
+      component: Wiki,
+      beforeEnter(to, from, next) {
+        if (!store.getters.isLoggedIn) {
+          next()
+        }
+        else {
+          next({path: '/boards', replace: true})
+        }
+      }
     },
     {
       path: '/boards',
@@ -45,9 +53,9 @@ export default new Router({
       path: '/token=:token',
       name: 'login',
       component: Wiki,
-      beforeEnter(to, from, next){
+      beforeEnter(to, from, next) {
         store.dispatch('logIn', to.params.token)
-        next({ name: 'boards'})
+        next({name: 'boards'})
       }
     }
   ]
