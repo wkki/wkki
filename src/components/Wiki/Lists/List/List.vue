@@ -2,23 +2,21 @@
   <div id="list" class="columns">
     <div class="column">
 
-      <div>
-        <div class="container">
-          <div class="field is-grouped">
-            <h4 class="title is-4">{{ list['name'] }} ({{ list['cards'].length }})</h4>
+      <div class="container">
+        <div class="field is-grouped">
+          <button class="button" @click="show=!show">
+            {{ list['name'] }} ({{ list['cards'].length }}) <i :class="showButtonClass" aria-hidden="true"></i>
+          </button>
 
-            <button class="button" @click="show=!show">
-              <i :class="showButtonClass" aria-hidden="true"></i>
-            </button>
-            <button class="button" v-if="$store.getters['members/isMyBoard'](this.list['idBoard'])"
-                    @click="showAddCard=!showAddCard">
-              <i :class="addButtonClass" aria-hidden="true"></i>
-            </button>
+          <button class="button" v-if="$store.getters['members/isMyBoard'](this.list['idBoard'])"
+                  @click="showAddCard=!showAddCard">
+            <i :class="addButtonClass" aria-hidden="true"></i>
+          </button>
 
-            <div v-if="showAddCard">
-              <AddCard :listId="list['id']"></AddCard>
-            </div>
+          <div v-if="showAddCard">
+            <AddCard :listId="list['id']"></AddCard>
           </div>
+
         </div>
 
 
