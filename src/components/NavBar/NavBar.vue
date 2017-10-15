@@ -7,8 +7,8 @@
           <h3 class="title is-3">wkki</h3>
         </a>
         <div class="navbar-item is-hidden-desktop">
-          <div class="navbar-item" v-if="$store.getters['boards/current']">
-            <h6 class="title is-5">{{ $store.getters['boards/current']['board']['name'] }}</h6>
+          <div class="navbar-item" v-if="!board['loading']">
+            <h5 class="title is-5">{{ board['name'] }}</h5>
           </div>
         </div>
         <div :class="navbarBurgerClass" data-target="nav-menu" @click="toggle()">
@@ -22,8 +22,8 @@
         <div class="navbar-start">
         </div>
 
-        <div class="navbar-item is-hidden-touch" v-if="$store.getters['boards/current']">
-          <h6 class="title is-5">{{ $store.getters['boards/current']['board']['name'] }}</h6>
+        <div class="navbar-item is-hidden-touch" v-if="!board['loading']">
+          <h5 class="title is-5">{{ board['name'] }}</h5>
         </div>
 
         <div v-if="$store.getters.isLoggedIn" class="navbar-end">
@@ -70,7 +70,14 @@
         } else {
           return "navbar-menu"
         }
-      }
+      },
+      board() {
+        let board = this.$store.getters['boards/get'](this.$route.params.boardId);
+        if (board['loading']) {
+          this.$store.dispatch('boards/get', this.$route.params.boardId);
+        }
+        return this.$store.getters['boards/get'](this.$route.params.boardId)
+      },
     },
     methods: {
       toggle(){

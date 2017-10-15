@@ -1,5 +1,6 @@
 import HTTP from '../http';
-let {http, } = HTTP;
+
+let {http,} = HTTP;
 
 class Member {
   constructor(username, member, boards) {
@@ -9,7 +10,7 @@ class Member {
   }
 }
 
-let fetch = (id) => {
+let _fetch = (id) => {
   let memberUrl = ['members', id].join('/');
   let boardsUrl = ['members', id, 'boards?filter=open'].join('/');
 
@@ -20,17 +21,13 @@ let fetch = (id) => {
     .then(([memberResponse, boardResponse]) => {
       console.log('fetch member', memberResponse.status, boardResponse.status);
       return new Member(id, memberResponse.data, boardResponse.data);
-    }, ([memberResponse, boardResponse]) => {
-      let m = new Member(id, memberResponse.data, boardResponse.data);
-      m.error = true;
-      return m;
     })
 };
 
-let get = (context, id) => {
+let _get = (context, id) => {
   console.log('get member', id);
   if (id && !context.getters.members[id]) {
-    return fetch(id)
+    return _fetch(id)
   } else {
     return new Promise((resolve) => {
       resolve(context.getters.members[id])
@@ -56,19 +53,35 @@ export default {
         return false
       }
     },
+    isMyBoard(state) {
+      return (id) => {
+        if (state.members['me']) {
+          return !!state.members['me'].member['idBoards']
+            .find((boardId) => {
+              return boardId === id;
+            })
+        } else {
+          console.log('ismyboard: cant find me')
+          return false
+        }
+      }
+    },
     myBoards(state) {
       if (state.members['me']) {
+        console.log('myboards', state.members['me']['boards'])
         return state.members['me']['boards']
+      } else {
+        console.log('cant find me')
       }
       return []
     }
   },
   actions: {
     fetch(context, id) {
-      return fetch(id)
+      return _fetch(id)
     },
     get(context, id) {
-      get(context, id)
+      _get(context, id)
         .then((member) => {
           context.commit('addMember', member);
           if (member.member.idOrganizations) {
@@ -86,6 +99,11 @@ export default {
   mutations: {
     addMember(state, member) {
       state.members = Object.assign({}, state.members, {[member.username]: member})
+    },
+    addMembers(state, members) {
+      members.forEach(member => {
+        state.cards = Object.assign({}, state.members, {[member.id]: member})
+      })
     },
     current(state, id) {
       state.current = id

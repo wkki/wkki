@@ -3,7 +3,9 @@
   <nav class="breadcrumb" aria-label="breadcrumbs">
     <ul>
       <li>
-        <a @click="showList(card.idList)">{{ listName(card.idList) }}</a>
+        <a @click="$router.push({name: 'board', params: {boardId: card.idBoard}})">
+          <i class="fa fa-arrow-left" aria-hidden="true"></i>
+        </a> {{ listName(card.idList) }}
       </li>
       <li class="is-active"><a href="#">{{ card.name }}</a></li>
     </ul>
@@ -14,17 +16,13 @@
   export default {
     props: ['card'],
     methods: {
-      listName(listId){
+      listName(listId) {
         if (this.$store.getters['lists/lists'][listId]) {
-          let name = this.$store.getters['lists/lists'][listId]['list']['name'];
+          let name = this.$store.getters['lists/lists'][listId]['name'];
           return name
         } else {
           return 'loading'
         }
-      },
-      showList(listId){
-        this.$store.dispatch('lists/setCurrent', listId);
-        this.$store.dispatch('setShowList', true)
       }
     }
   }

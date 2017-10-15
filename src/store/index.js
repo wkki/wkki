@@ -28,14 +28,12 @@ let localStore = {
   }
 };
 
+console.log('trying to set token', localStore.get('oauthToken'))
 setToken(localStore.get('oauthToken'));
 
 const store = new Vuex.Store({
   state: {
     oauthToken: localStore.get('oauthToken'),
-    showList: false,
-    showCard: false,
-    showSearch: false,
   },
   getters: {
     apiKey(state){
@@ -43,15 +41,6 @@ const store = new Vuex.Store({
     },
     oauthToken(state){
       return state.oauthToken
-    },
-    showList(state){
-      return state.showList
-    },
-    showCard(state){
-      return state.showCard
-    },
-    showSearch(state){
-      return state.showSearch
     },
     isLoggedIn(state){
       return !!state.oauthToken
@@ -67,35 +56,11 @@ const store = new Vuex.Store({
     logOut(context){
       localStore.rm('oauthToken');
       context.commit('logIn', undefined);
-    },
-    setShowList(context, flipTo){
-      context.commit('showList', flipTo);
-      context.commit('showCard', !flipTo);
-      context.commit('showSearch', !flipTo);
-    },
-    setShowCard(context, flipTo){
-      context.commit('showList', !flipTo);
-      context.commit('showCard', flipTo);
-      context.commit('showSearch', !flipTo);
-    },
-    setShowSearch(context, flipTo){
-      context.commit('showList', !flipTo);
-      context.commit('showCard', !flipTo);
-      context.commit('showSearch', flipTo);
     }
   },
   mutations: {
     logIn(state, oauthToken){
       state.oauthToken = oauthToken
-    },
-    showList(state, flipTo){
-      state.showList = flipTo
-    },
-    showCard(state, flipTo){
-      state.showCard = flipTo
-    },
-    showSearch(state, flipTo){
-      state.showSearch = flipTo
     }
   },
   modules: {

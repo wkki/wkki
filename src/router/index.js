@@ -4,17 +4,17 @@ import store from '../store/index'
 
 Vue.use(Router);
 
-import SearchResults from '../components/Wiki/WikiComponents/SearchResults.vue'
 import Settings from '../components/Settings.vue'
-import Wiki from '../components/Wiki/Wiki.vue'
+import Card from '../components/Wiki/Lists/List/Cards/Card/Card.vue'
+import Board from '../components/Wiki/Board.vue'
 import MyBoards from '../components/MyBoards.vue'
 
-export default new Router({
+let router = new Router({
   routes: [
     {
       path: '/',
       name: 'wiki',
-      component: Wiki,
+      component: MyBoards,
       beforeEnter(to, from, next) {
         if (!store.getters.isLoggedIn) {
           next()
@@ -26,24 +26,25 @@ export default new Router({
     },
     {
       path: '/boards',
-      name: 'boards',
       component: MyBoards
     },
     {
       path: '/boards/:boardId',
       name: 'board',
-      component: Wiki
+      props: true,
+      component: Board
     },
     {
       path: '/card/:cardId',
       name: 'card',
-      component: Wiki
+      props: true,
+      component: Card
     },
-    {
+    /*{
       path: '/search',
       name: 'search',
       component: SearchResults
-    },
+    },*/
     {
       path: '/settings',
       name: 'settings',
@@ -52,7 +53,7 @@ export default new Router({
     {
       path: '/token=:token',
       name: 'login',
-      component: Wiki,
+      component: Board,
       beforeEnter(to, from, next) {
         store.dispatch('logIn', to.params.token)
         next({name: 'boards'})
@@ -60,3 +61,12 @@ export default new Router({
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (store.getters.isLoggedIn && !store.getters['members/members']['me']) {
+    store.dispatch('members/get', 'me');
+  }
+  next();
+})
+
+export default router

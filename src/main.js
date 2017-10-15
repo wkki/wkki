@@ -5,9 +5,11 @@ import App from './App'
 
 import router from './router'
 import store from './store/index';
+import VueAutosize from 'vue-autosize';
 
 require("font-awesome-webpack");
 
+Vue.use(VueAutosize)
 Vue.config.productionTip = false;
 
 /* eslint-disable no-new */

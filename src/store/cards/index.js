@@ -1,113 +1,74 @@
-import HTTP from '../http';
-let {http, } = HTTP;
+import http from '../http';
 
-class Card {
-  constructor(id, card) {
-    this.id = id;
-    this.card = card;
-    this.edit = false;
-  }
-}
-
-let fetch = (id) => {
-  let url = ['cards', id].join('/');
-  let params =
-    {
-      attachments: true
-    };
-
-  return http.get(url, {params})
-    .then(response => {
-      console.log(response.status)
-      return new Card(id, response.data);
-    }, response => {
-      console.log(response.status)
-      let m = new Card(id, response.data);
-      m.error = true;
-      return m;
-    })
-};
-
-let get = (context, id) => {
-  console.log('get card', id);
-  if (id && !context.getters.cards[id]) {
-    return fetch(id)
-      .then((card) => {
-        context.commit('addCard', card);
-        console.log('fetching list with id ', card['card'].idList);
-        context.dispatch('lists/get', card['card'].idList, {root: true});
-        return card
-      })
-  } else {
-    return new Promise((resolve) => {
-      resolve(context.getters.cards[id])
-    })
-  }
-};
 
 export default {
   namespaced: true,
   state: {
-    cards: {},
-    current: false
+    cards: {}
   },
   getters: {
     cards(state) {
       return state.cards
     },
-    current(state) {
-      if (state.current && state.cards[state.current]) {
-        return state.cards[state.current]
-      } else {
-        console.log('no current card');
-        return false
+    get(state) {
+      return (id) => {
+        if (!state.cards[id]) {
+          return {loading: true}
+        }
+        return state.cards[id]
       }
-    }
+    },
   },
   actions: {
     fetch(context, id) {
-      return fetch(id)
-        .then((card) => {
-          context.commit('addCard', card);
-        })
+      http.fetchCard(id).then((cardResponse) => {
+        context.commit('addCard', cardResponse.data)
+      })
     },
     get(context, id) {
-      get(context, id)
-    },
-    setCurrent(context, id) {
-      get(context, id)
-        .then((card) => {
-          if (id) {
-            let listId = card.card.idList;
-            context.dispatch('lists/setCurrent', listId, {root: true});
-          }
-          context.commit('current', id);
-          console.log('set current card to', id);
-        })
-    },
-    alter(context, card) {
-      context.commit('addCard', card);
+      console.log('get card', id);
+      if (id && !context.getters.cards[id]) {
+        context.commit('addCard', {id, loading: true});
+        return http.fetchCard(id)
+          .then((card) => {
+            console.log('got card', card)
+            context.commit('addCard', card.data);
+            console.log('dispatching boards/get', card.data.idBoard)
+            context.dispatch('boards/get', card.data.idBoard, {root: true})
+          })
+      }
     },
     commit(context, card) {
-      let urlCard = ['cards', card.card.id].join('/');
-      let urlComment = ['cards', card.card.id, 'actions', 'comments'].join('/');
+      let urlCard = ['cards', card.id].join('/');
+      let urlComment = ['cards', card.id, 'actions', 'comments'].join('/');
 
-      let paramsCard = {desc: card.card.desc};
-      let paramsComment = {text: card.card.desc};
+      let paramsCard = {desc: card.desc};
+      let paramsComment = {text: card.desc};
 
       return Promise.all([
         http.put(urlCard, paramsCard),
         http.post(urlComment, paramsComment)
       ])
+        .then(() => {
+          context.commit('addCard', card);
+        })
     },
+    createCard(context, {name, listId}) {
+      http.addCard(name, listId)
+        .then((resp) => {
+
+          context.dispatch('fetch', resp.data.id)
+        })
+    }
   },
   mutations: {
     addCard(state, card) {
       state.cards = Object.assign({}, state.cards, {[card.id]: card})
     },
-    current(state, id) {
-      state.current = id
-    }
+    addCards(state, cards) {
+      cards.forEach(card => {
+        state.cards = Object.assign({}, state.cards, {[card.id]: card})
+      })
+    },
   }
-
 }

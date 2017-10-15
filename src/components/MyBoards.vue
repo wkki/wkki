@@ -58,9 +58,7 @@
           });
           return boardsByOrga
         } else {
-          console.log('dispatching...')
-          this.$store.dispatch('members/get', 'me');
-          return false
+          return this.$store.dispatch('members/get', 'me');
         }
       },
       organizations(){
