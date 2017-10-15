@@ -47,10 +47,11 @@
 </template>
 
 <script>
-  import LoginButton from './NavBarComponents/LoginButton.vue'
-  import LogoutButton from './NavBarComponents/LogoutButton.vue'
+  import LoginButton from '../../LoginButton/LoginButton.vue'
+  import LogoutButton from '../../LoginButton/LogoutButton.vue'
 
   export default {
+    props: ['boardId'],
     data() {
       return {
         toggled: false
@@ -72,11 +73,11 @@
         }
       },
       board() {
-        let board = this.$store.getters['boards/get'](this.$route.params.boardId);
+        let board = this.$store.getters['boards/get'](this.boardId);
         if (board['loading']) {
-          this.$store.dispatch('boards/get', this.$route.params.boardId);
+          this.$store.dispatch('boards/get', this.boardId);
         }
-        return this.$store.getters['boards/get'](this.$route.params.boardId)
+        return this.$store.getters['boards/get'](this.boardId)
       },
     },
     methods: {

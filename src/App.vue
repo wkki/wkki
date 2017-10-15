@@ -1,20 +1,13 @@
 <template>
   <div id="app">
-    <NavBar></NavBar>
-    <div class="section">
-      <div class="columns">
-        <div class="column">
-          <router-view></router-view>
-        </div>
-      </div>
-    </div>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
   import Vue from 'vue'
 
-  import NavBar from './components/NavBar/NavBar.vue'
+  import NavBar from './components/Wiki/NavBar/NavBar.vue'
 
   export default {
     name: 'app',
@@ -27,10 +20,10 @@
       boardName() {
         return this.$store.getters.boardName
       },
-      isLoggedIn(){
+      isLoggedIn() {
         return this.$store.getters.isLoggedIn
       },
-      needsLogin(){
+      needsLogin() {
         return (this.$store.getters.boardIsPrivate && !this.$store.getters.isLoggedIn)
       },
     },

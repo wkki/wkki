@@ -6,6 +6,7 @@ Vue.use(Router);
 
 import Settings from '../components/Settings.vue'
 import Card from '../components/Wiki/Lists/List/Cards/Card/Card.vue'
+import Home from '../components/Home.vue'
 import Board from '../components/Wiki/Board.vue'
 import MyBoards from '../components/MyBoards.vue'
 
@@ -13,8 +14,8 @@ let router = new Router({
   routes: [
     {
       path: '/',
-      name: 'wiki',
-      component: MyBoards,
+      name: 'home',
+      component: Home,
       beforeEnter(to, from, next) {
         if (!store.getters.isLoggedIn) {
           next()
@@ -26,6 +27,7 @@ let router = new Router({
     },
     {
       path: '/boards',
+      name: 'boards',
       component: MyBoards
     },
     {
@@ -67,6 +69,6 @@ router.beforeEach((to, from, next) => {
     store.dispatch('members/get', 'me');
   }
   next();
-})
+});
 
 export default router

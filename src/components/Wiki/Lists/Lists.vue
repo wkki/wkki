@@ -3,16 +3,18 @@
 
     <div class="columns is-multiline">
       <div class="column"></div>
-      <div class="column is-3 is-centered">
-        <input class="input" type="text" placeholder="filter" v-model="filterStr">
-      </div>
-      <!--
-      <div class="column"></div>
 
-      <div class="column is-3 is-right">
-        <AddList :boardId="boardId"></AddList>
+      <div class="column is-3 is-centered">
+
+        <div class="field is-grouped">
+          <div class="control">
+            <input class="input" type="text" placeholder="filter" v-model="filterStr">
+          </div>
+          <div class="control">
+            <button class="button" @click="openAllLists=!openAllLists">open all</button>
+          </div>
+        </div>
       </div>
--->
     </div>
 
     <div class="columns">
@@ -21,13 +23,13 @@
         <div class="columns" v-for="list in listsInBoard()" :key="list.id">
           <div class="column">
 
-            <List :list="list" :filterStr="filterStr"></List>
+            <List :list="list" :filterStr="filterStr" :show="openAllLists"></List>
 
           </div>
         </div>
+
       </div>
     </div>
-
   </div>
 </template>
 
@@ -47,6 +49,7 @@
     data() {
       return {
         showInput: false,
+        openAllLists: false,
         filterStr: '',
       }
     },
