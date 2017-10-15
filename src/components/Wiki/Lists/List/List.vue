@@ -4,7 +4,7 @@
 
       <div class="container">
         <div class="field is-grouped">
-          <button class="button" @click="show=!show">
+          <button class="button" @click="showCards=!showCards">
             {{ list['name'] }} ({{ list['cards'].length }}) <i :class="showButtonClass" aria-hidden="true"></i>
           </button>
 
@@ -19,15 +19,14 @@
 
         </div>
 
-
-        <template v-if="show || filterStr">
+        <template v-if="showCards || filterStr || show">
           <div class="box">
-            <Cards :listId="list['id']" :filterStr="filterStr"></Cards>
+            internal:{{ showCards }} external: {{show}}
+            <Cards :listId="list['id']" :filterStr="filterStr" @flipOpen="setState(showCards)"></Cards>
           </div>
         </template>
 
       </div>
-
     </div>
   </div>
 </template>
@@ -42,7 +41,8 @@
     name: 'List',
     data() {
       return {
-        showAddCard: false
+        showAddCard: false,
+        showCards: false
       }
     },
     props: ['list', 'filterStr', 'show'],
@@ -50,9 +50,16 @@
       Cards,
       AddCard
     },
+    watch: {
+      'show': function(val) {
+        if(val) {
+          this.showCards = false;
+        }
+      }
+    },
     computed: {
       showButtonClass() {
-        if (this.show) {
+        if (this.showCards) {
           return "fa fa-chevron-up"
         } else return "fa fa-chevron-down"
       },
