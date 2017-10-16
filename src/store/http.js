@@ -80,21 +80,27 @@ let addCard = (name, listId) => {
 
 let updateCard = (card) => {
   let urlCard = ['cards', card.id].join('/');
-  let urlComment = ['cards', card.id, 'actions', 'comments'].join('/');
 
   let paramsCard = {desc: card.desc};
-  let paramsComment = {text: card.desc};
 
   return Promise.all([
     http.put(urlCard, paramsCard),
-    http.post(urlComment, paramsComment)
   ])
 };
+
+let fetchCardActions = (cardId) => {
+  let urlCardActions = ['cards', cardId, 'actions'].join('/');
+  let params = {
+    filter: 'updateCard:desc'
+  };
+  return http.get(urlCardActions, {params})
+}
 
 
 export default {
   setToken,
   fetchCard,
+  fetchCardActions,
   initBoard,
   addList,
   addCard,

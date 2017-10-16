@@ -22,8 +22,8 @@
           <button v-if="isEditable" @click="edit=!edit" class="button">edit Card</button>
         </div>
         last activity: {{ card.dateLastActivity }}
-
-    </div>
+        <CardHistory :cardId="cardId"></CardHistory>
+      </div>
     </section>
   </div>
 
@@ -35,7 +35,7 @@
   import EditItem from './CardComponents/EditItem.vue'
   import BreadCrumbs from './CardComponents/BreadCrumbs.vue'
   import CardContent from './CardComponents/CardContent.vue'
-
+  import CardHistory from './CardHistory.vue'
   import NavBar from '../../../../NavBar/NavBar.vue'
 
   export default {
@@ -50,6 +50,7 @@
       EditItem,
       BreadCrumbs,
       CardContent,
+      CardHistory,
       NavBar
     },
     computed: {

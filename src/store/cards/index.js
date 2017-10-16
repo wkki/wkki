@@ -4,7 +4,8 @@ import http from '../http';
 export default {
   namespaced: true,
   state: {
-    cards: {}
+    cards: {},
+    cardActions: {}
   },
   getters: {
     cards(state) {
@@ -16,6 +17,14 @@ export default {
           return {loading: true}
         }
         return state.cards[id]
+      }
+    },
+    getActions(state) {
+      return (id) => {
+        if (!state.cardActions[id]) {
+          return {loading: true}
+        }
+        return state.cardActions[id]
       }
     },
   },
@@ -35,6 +44,22 @@ export default {
             context.commit('addCard', card.data);
             console.log('dispatching boards/get', card.data.idBoard)
             context.dispatch('boards/get', card.data.idBoard, {root: true})
+          })
+      }
+    },
+    fetchActions(context, id) {
+      http.fetchCardActions(id)
+        .then((response) => {
+          context.commit('addCardActions', {id, data: response.data})
+        })
+    },
+    getActions(context, id) {
+      if (id && !context.getters.getActions[id]) {
+        context.commit('addCardActions', {id, loading: true});
+        http.fetchCardActions(id)
+          .then((response) => {
+            console.log(response)
+            context.commit('addCardActions',  {id, data: response.data})
           })
       }
     },
@@ -60,5 +85,8 @@ export default {
         state.cards = Object.assign({}, state.cards, {[card.id]: card})
       })
     },
+    addCardActions(state, cardActions) {
+      state.cardActions = Object.assign({}, state.cardActions, {[cardActions.id]: cardActions})
+    }
   }
 }
