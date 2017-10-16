@@ -5,58 +5,25 @@
       <div class="container">
 
         <BreadCrumbs v-bind:card="card"></BreadCrumbs>
+
         <div class="columns">
 
           <div class="column">
-
-            <div class="columns is-multiline">
-              <div class="column">
-
-                <div class="media-content">
-                  <div class="content">
-
-                    <div v-html="convert(card.desc)"></div>
-
-                  </div>
-                </div>
-              </div>
-
-              <div class="column" v-if="card.attachments.length > 0">
-
-                <div class="tile is-ancestor">
-                  <div class="tile is-parent is-vertical">
-
-                    <article class="tile is-child box" v-for="attachment in card.attachments">
-                      <p>{{ attachment['name'] }}</p>
-                      <figure v-if="attachment['previews'].length > 0" class="image is-4by3">
-
-                        <a :href="attachment['url']"><img style="object-fit: contain;"
-                                                          :src="attachment['previews'][2]['url']"></a>
-                      </figure>
-
-                      <a v-else="" :href="attachment['url']">download</a>
-                    </article>
-
-                  </div>
-                </div>
-              </div>
-
-            </div>
+            <CardContent :card="card"></CardContent>
           </div>
 
-          <div v-if="edit" class="column">
-            <EditItem :card="card"></EditItem>
-          </div>
-
+          <template v-if="edit">
+            <EditItem class="column" :card="card"></EditItem>
+          </template>
         </div>
+
         <div class="level">
           <a v-bind:href="card.url">go to Card</a><br>
           <button v-if="isEditable" @click="edit=!edit" class="button">edit Card</button>
         </div>
         last activity: {{ card.dateLastActivity }}
 
-
-      </div>
+    </div>
     </section>
   </div>
 
@@ -64,14 +31,12 @@
 
 <script>
   import Vue from 'vue'
-  import showdown from 'showdown'
 
   import EditItem from './CardComponents/EditItem.vue'
   import BreadCrumbs from './CardComponents/BreadCrumbs.vue'
+  import CardContent from './CardComponents/CardContent.vue'
 
   import NavBar from '../../../../NavBar/NavBar.vue'
-
-  const conv = new showdown.Converter({});
 
   export default {
     name: 'item',
@@ -84,6 +49,7 @@
     components: {
       EditItem,
       BreadCrumbs,
+      CardContent,
       NavBar
     },
     computed: {
@@ -102,11 +68,16 @@
           return false
         }
       }
-    },
-    methods: {
-      convert(markdownText) {
-        return conv.makeHtml(markdownText) || '[no text]';
-      }
     }
   }
 </script>
+<style>
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s
+  }
+
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */
+  {
+    opacity: 0
+  }
+</style>

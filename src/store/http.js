@@ -78,6 +78,19 @@ let addCard = (name, listId) => {
   return http.post(cardUrl, params)
 };
 
+let updateCard = (card) => {
+  let urlCard = ['cards', card.id].join('/');
+  let urlComment = ['cards', card.id, 'actions', 'comments'].join('/');
+
+  let paramsCard = {desc: card.desc};
+  let paramsComment = {text: card.desc};
+
+  return Promise.all([
+    http.put(urlCard, paramsCard),
+    http.post(urlComment, paramsComment)
+  ])
+};
+
 
 export default {
   setToken,
@@ -85,6 +98,7 @@ export default {
   initBoard,
   addList,
   addCard,
+  updateCard,
   http,
   fetchList
 }

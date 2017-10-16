@@ -39,16 +39,7 @@ export default {
       }
     },
     commit(context, card) {
-      let urlCard = ['cards', card.id].join('/');
-      let urlComment = ['cards', card.id, 'actions', 'comments'].join('/');
-
-      let paramsCard = {desc: card.desc};
-      let paramsComment = {text: card.desc};
-
-      return Promise.all([
-        http.put(urlCard, paramsCard),
-        http.post(urlComment, paramsComment)
-      ])
+      http.updateCard(card)
         .then(() => {
           context.commit('addCard', card);
         })
@@ -56,7 +47,6 @@ export default {
     createCard(context, {name, listId}) {
       http.addCard(name, listId)
         .then((resp) => {
-
           context.dispatch('fetch', resp.data.id)
         })
     }

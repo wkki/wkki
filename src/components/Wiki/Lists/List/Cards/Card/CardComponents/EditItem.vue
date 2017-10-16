@@ -31,7 +31,7 @@
         this.card.desc = e.target.value;
       },
       save() {
-        this.$store.dispatch('cards/commit', this.card['id']);
+        this.$store.dispatch('cards/commit', this.card);
         this.unchangedDesc = this.card.desc;
         this.changes = false;
       },

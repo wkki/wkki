@@ -21,7 +21,6 @@
 
         <template v-if="showCards || filterStr || show">
           <div class="box">
-            internal:{{ showCards }} external: {{show}}
             <Cards :listId="list['id']" :filterStr="filterStr" @flipOpen="setState(showCards)"></Cards>
           </div>
         </template>
