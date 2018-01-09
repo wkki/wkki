@@ -18,12 +18,25 @@
         </div>
 
         <div class="level">
-          <a v-bind:href="card.url">go to Card</a><br>
-          <button v-if="isEditable" @click="edit=!edit" class="button">edit Card</button>
+          <a v-bind:href="card.url">go to Card</a>
+          <br>
+          <button v-if="isEditable" @click="edit=!edit" class="button">
+            <div v-if="edit">
+              <span class="icon is-small">
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+              </span>
+            </div>
+            <div v-else="">
+              <span class="icon is-small">
+                <i class="fa fa-angle-left" aria-hidden="true"></i>
+              </span>
+              edit Card
+            </div>
+          </button>
         </div>
         last activity: {{ card.dateLastActivity }}
 
-    </div>
+      </div>
     </section>
   </div>
 
@@ -72,12 +85,16 @@
   }
 </script>
 <style>
-  .fade-enter-active, .fade-leave-active {
+  .fade-enter-active,
+  .fade-leave-active {
     transition: opacity .5s
   }
 
-  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */
-  {
+  .fade-enter,
+  .fade-leave-to
+  /* .fade-leave-active below version 2.1.8 */
+
+    {
     opacity: 0
   }
 </style>

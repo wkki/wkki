@@ -12,7 +12,7 @@
   "dependencies": {
     "autosize": "^4.0.0",
     "axios": "^0.16.2",
-    "bulma": "^0.5.1",
+    "bulma": "^0.5.3",
     "font-awesome": "^4.7.0",
     "font-awesome-webpack": "0.0.5-beta.2",
     "fuzzy": "^0.1.3",

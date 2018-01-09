@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import http from '../http';
 
 
@@ -49,6 +50,13 @@ export default {
         .then((resp) => {
           context.dispatch('fetch', resp.data.id)
         })
+    },
+    archiveCard(context, card) {
+      console.log("store: archive card", card)
+      http.archiveCard(card)
+        .then(() => {
+          context.commit('deleteCardFromState', card)
+        })
     }
   },
   mutations: {
@@ -60,5 +68,8 @@ export default {
         state.cards = Object.assign({}, state.cards, {[card.id]: card})
       })
     },
+    deleteCardFromState(state, card){
+      Vue.delete(state.cards, card.id)
+    }
   }
 }

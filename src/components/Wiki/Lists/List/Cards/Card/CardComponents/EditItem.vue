@@ -1,13 +1,26 @@
 <template>
   <div>
+
+    <!--
+  todo: add modal to say okay, actually archive file
+-->
+    <div class="field has-addons has-addons-right">
+      <button class="button is-danger" @click="archiveCard()">archive card</button>
+    </div>
+
     <div class="field">
       <div class="control">
         <textarea class="textarea" ref="textarea" placeholder="" @input="update" :value="card.desc"></textarea>
       </div>
+    </div>
+
+    <div class="field">
       <button class="button" :disabled="!changes" @click="save()">save</button>
       <button class="button" :disabled="!changes" @click="resetDesc()">reset</button>
     </div>
+
   </div>
+
 </template>
 
 <script>
@@ -38,6 +51,11 @@
       resetDesc() {
         this.card.desc = this.unchangedDesc;
         this.changes = false;
+      },
+      archiveCard() {
+        console.log("deleting card", this.card)
+        this.$store.dispatch('cards/archiveCard', this.card);
+        this.$router.push({ name: 'board', params: { boardId: this.card.idBoard } })
       }
     },
     mounted() {

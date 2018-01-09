@@ -91,6 +91,14 @@ let updateCard = (card) => {
   ])
 };
 
+let archiveCard = (card) => {
+  let urlCard = ['cards', card.id].join('/');
+  let params = {
+    closed: true
+  }
+  return http.put(urlCard, params)
+}
+
 
 export default {
   setToken,
@@ -99,6 +107,7 @@ export default {
   addList,
   addCard,
   updateCard,
+  archiveCard,
   http,
   fetchList
 }
