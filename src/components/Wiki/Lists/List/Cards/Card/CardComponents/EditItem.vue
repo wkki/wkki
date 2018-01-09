@@ -5,7 +5,31 @@
   todo: add modal to say okay, actually archive file
 -->
     <div class="field has-addons has-addons-right">
-      <button class="button is-danger" @click="archiveCard()">archive card</button>
+      <button class="button is-danger" @click="showArchiveModal=!showArchiveModal">archive card</button>
+    </div>
+    <div :class="showArchiveModal ? 'modal is-active' : 'modal'">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <section class="modal-card-body">
+          <h5 class="title is-5">sure?</h5>
+          you can always restore this card via trello
+        </section>
+        <footer class="modal-card-foot">
+
+          <button class="button is-danger" @click=archiveCard()>
+            <span class="icon is-small">
+              <i class="fa fa-check" aria-hidden="true"></i>
+            </span>
+            archive card
+          </button>
+
+          <button class="button" @click="showArchiveModal=!showArchiveModal">
+            <i class="fa fa-close" aria-hidden="true"></i>
+          </button>
+          
+        </footer>
+      </div>
+      <button class="modal-close is-large" aria-label="close"></button>
     </div>
 
     <div class="field">
@@ -33,7 +57,8 @@
     data() {
       return {
         changes: false,
-        unchangedDesc: this.card.desc
+        unchangedDesc: this.card.desc,
+        showArchiveModal: false
       }
     },
     computed: {},
